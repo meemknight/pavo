@@ -11,6 +11,8 @@ Those 3 next attributes are crucial:
 3. Set breakpoints on source code lines (MUST)
 4. Set breakpoints on function entry (MUST)
 
+<br>
+
 5. It will be great for pivo to read and write registers and memory (MUST)
 6. A required property is single stepping (instruction, step in, step outm, step over) (MUST)
 
