@@ -3,7 +3,7 @@ User Stories
 
 Linux C/C++ debugger named **pavo** (MUST) wich can do all the basic things a debugger can do:
 
-1. Pivo needs to launch, halt, and continue execution (MUST)
+1. Pavo needs to launch, halt, and continue execution (MUST)
 
 Those 3 next attributes are crucial:
 
@@ -13,7 +13,7 @@ Those 3 next attributes are crucial:
 
 <br>
 
-5. It will be great for pivo to read and write registers and memory (MUST)
+5. It will be great for pavo to read and write registers and memory (MUST)
 6. A required property is single stepping (instruction, step in, step outm, step over) (MUST)
 
 Good attributes are the following:
