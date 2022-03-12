@@ -1,4 +1,4 @@
-# MDS project
+# MDS project - pavo debugger
 
 
 * [User stories](https://github.com/meemknight/pavo/blob/master/userStories.md)
