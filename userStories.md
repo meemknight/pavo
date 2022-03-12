@@ -14,10 +14,13 @@ Those 3 next attributes are crucial:
 5. It will be great for pivo to read and write registers and memory (MUST)
 6. A required property is single stepping (instruction, step in, step outm, step over) (MUST)
 
-Good attributes are the following:<br/>
+Good attributes are the following:
+
 7. Print current source location (OPTIONAL)
 8. Print backtrace (OPTIONAL)
 9. Print values of simple variables (OPTIONAL)
+
+<br>
 
 10. Windows compatibility is a very well recieved feature, but it is not a need (OPTIONAL)
 11. A multy-language interface is nice to have (OPTIONAL)
