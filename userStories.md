@@ -1,7 +1,7 @@
 User Stories
 ---
 
-C/C++ debugger wich can do all the basic things a debugger can do:
+Linux C/C++ debugger wich can do all the basic things a debugger can do:
 
 1. Launch, halt, and continue execution (MUST)
 2. Set breakpoints on memory addresses
