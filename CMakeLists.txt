@@ -56,7 +56,7 @@ if(WIN32)
 elseif(UNIX)
 	target_compile_definitions(pavo-gui PUBLIC PAVO_UNIX) 
 else()
-	message(FATAL_ERROR "Pavo only supports windows and unix")
+	message(FATAL_ERROR "Pavo only supports windows and unix" )
 endif()
 
 
@@ -103,7 +103,7 @@ target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli
 if(WIN32)
 
 elseif(UNIX)
-	target_link_libraries(pavo-cli PRIVATE libelfin)
+	target_link_libraries(pavo-cli PRIVATE libelfin imgui)
 endif()
 
 #target_link_libraries(pavo-cli PRIVATE )
