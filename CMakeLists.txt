@@ -19,6 +19,7 @@ add_subdirectory(thirdparty/gl2d)
 add_subdirectory(thirdparty/raudio)
 add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
+add_subdirectory(thirdparty/cpu_features)
 
 if(WIN32)
 
@@ -72,7 +73,7 @@ elseif(UNIX)
 	target_link_libraries(pavo-gui PRIVATE libelfin)
 endif()
 
-target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui)
+target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui CpuFeatures)
 
 
 

@@ -1,20 +1,13 @@
 #pragma once
 
-
 #include "imgui.h"
 #include <cstdint>
+#include <string>
+#include "cpuFeatures.h"
 
 //todo(vlod) add vector types and CPU feature detector
 
-#ifdef PAVO_UNIX
-#include <x86intrin.h>
-#else
-#include <intrin.h>
-#endif
 
-//SSE - 128 registers
-using t_XMM = __m128;
-using t_AVX = __m256;
 
 //for imgui
 #ifdef _MSC_VER
@@ -39,6 +32,7 @@ enum Types
 	t_unsigned64,
 	t_real32,
 	t_real64,
+	t_sse_float,
 	t_string,
 	typesCount
 };
@@ -56,6 +50,7 @@ constexpr const char *types[] =
 	"unsigned64",
 	"float",
 	"double",
+	"sse float"
 	"string",
 };
 
@@ -69,6 +64,7 @@ union Type
 	uint32_t unsigned32;
 	int64_t signed64;
 	uint64_t unsigned64;
+	SSE_float_t sseFloat;
 	float real32;
 	double real64;
 };
@@ -104,20 +100,17 @@ struct GenericType
 		{
 			return 8;
 		}
+		if (type == t_sse_float)
+		{
+			return 4 * 4;
+		}
 
 		return 0;
 	}
 
-	//todo(vlod) some sfinae on T
+	//todo(vlod) some sfinae on T?
 	template<class T>
 	T &getData() 
-	{
-		return *(*T)(&data);
-	}
-
-	//todo(vlod) some sfinae again and find a way to check if T is good. Return a stub reff if not or sthing
-	template<class T>
-	T &getDataSafe()
 	{
 		return *(*T)(&data);
 	}
@@ -202,7 +195,10 @@ inline void typeInput(GenericType &data, bool *pressedEnter = 0, bool *changed =
 	{
 		pressed = ImGui::InputScalar("##real64", ImGuiDataType_Double, data.ptr(), 0, 0, 0);
 	}
-	else
+	else if (itemCurrent == t_sse_float)
+	{
+		pressed = ImGui::InputScalarN("##sseFloat", ImGuiDataType_Float, data.ptr(), 4, 0, 0, 0);
+	}else
 	if (itemCurrent == t_string && acceptStrings)
 	{
 		char buff[260];
