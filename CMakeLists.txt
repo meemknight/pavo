@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug$<$<CONFIG:Debug>:Debug>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
-project(mygame)
+project(pavo)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -48,9 +48,14 @@ if(MSVC) # If using the VS compiler...
 endif()
 
 if(WIN32)
-	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC _WIN32) 
-  
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PAVO_WIN32) 
+elseif(UNIX)
+	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PAVO_UNIX) 
+else()
+	message( FATAL_ERROR "Pavo only supports windows and unix" )
 endif()
+
+
 
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/gameLayer/")
