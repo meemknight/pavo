@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug$<$<CONFIG:Debug>:Debug>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
-project(pavo)
+project(pavo-gui)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
@@ -19,49 +19,91 @@ add_subdirectory(thirdparty/gl2d)
 add_subdirectory(thirdparty/raudio)
 add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
-add_subdirectory(thirdparty/libelfin-fbreg)
+
+if(WIN32)
+
+elseif(UNIX)
+	add_subdirectory(thirdparty/libelfin-fbreg)
+endif()
 
 
-# Define MY_SOURCES to be a list of all the source files
-file(GLOB_RECURSE MY_SOURCES CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp")
+# Define PAVO-GUI-CPPS to be a list of all the source files for cli
+file(GLOB_RECURSE PAVO-GUI-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/src/*.cpp")
+file(GLOB_RECURSE PAVO-SHARED-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/shared/src/*.cpp")
+file(GLOB_RECURSE PAVO-CLI-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli/src/*.cpp")
 
 
-add_executable("${CMAKE_PROJECT_NAME}")
+####################################################################################################################################################################################
+#pavo-gui
+####################################################################################################################################################################################
 
-set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY CXX_STANDARD 17)
+add_executable(pavo-gui)
+set_property(TARGET pavo-gui PROPERTY CXX_STANDARD 17)
 
-target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/") # This is useful to get an ASSETS_PATH in your IDE during development but you should comment this if you compile a release version and uncomment the next line
-#target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="./resources/") # Uncomment this line to setup the ASSETS_PATH macro to the final assets directory when you share the game
-#add_definitions(-DRESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/resources/")
+target_compile_definitions(pavo-gui PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/resources/") 
+#target_compile_definitions(pavo-gui PUBLIC RESOURCES_PATH="./resources/") #for release-ship builds
 
-target_sources("${CMAKE_PROJECT_NAME}" PRIVATE ${MY_SOURCES} )
+target_sources(pavo-gui PRIVATE ${PAVO-GUI-CPPS} ${PAVO-SHARED-CPPS} )
 
 
 if(MSVC) # If using the VS compiler...
-
-	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC _CRT_SECURE_NO_WARNINGS)
-
-	set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-	
-	set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreadedDebug<$<CONFIG:Debug>:Debug>")
-	set_property(TARGET "${CMAKE_PROJECT_NAME}" PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
-
+	target_compile_definitions(pavo-gui PUBLIC _CRT_SECURE_NO_WARNINGS)
+	set_target_properties(pavo-gui PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
 
 if(WIN32)
-	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PAVO_WIN32) 
+	target_compile_definitions(pavo-gui PUBLIC PAVO_WIN32)
 elseif(UNIX)
-	target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC PAVO_UNIX) 
+	target_compile_definitions(pavo-gui PUBLIC PAVO_UNIX) 
 else()
 	message( FATAL_ERROR "Pavo only supports windows and unix" )
 endif()
 
 
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared/include/")
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/")
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/gameLayer/")
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/platform/")
 
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/")
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/gameLayer/")
-target_include_directories("${CMAKE_PROJECT_NAME}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/include/platform/")
+
+if(WIN32)
+
+elseif(UNIX)
+	target_link_libraries(pavo-gui PRIVATE libelfin)
+endif()
+
+target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui)
 
 
-target_link_libraries("${CMAKE_PROJECT_NAME}" PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui libelfin)
 
+####################################################################################################################################################################################
+#pavo-cli
+####################################################################################################################################################################################
+
+add_executable(pavo-cli)
+set_property(TARGET pavo-cli PROPERTY CXX_STANDARD 17)
+
+target_sources(pavo-cli PRIVATE ${PAVO-CLI-CPPS} ${PAVO-SHARED-CPPS} )
+
+if(MSVC) # If using the VS compiler...
+	target_compile_definitions(pavo-cli PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
+if(WIN32)
+	target_compile_definitions(pavo-cli PUBLIC PAVO_WIN32)
+elseif(UNIX)
+	target_compile_definitions(pavo-cli PUBLIC PAVO_UNIX) 
+else()
+	message( FATAL_ERROR "Pavo only supports windows and unix" )
+endif()
+
+target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared/include/")
+target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli/include/")
+
+if(WIN32)
+
+elseif(UNIX)
+	target_link_libraries(pavo-cli PRIVATE libelfin)
+endif()
+
+#target_link_libraries(pavo-cli PRIVATE )
