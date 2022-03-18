@@ -1,13 +1,11 @@
 #include <iostream>
-
-
+#include <fmt/core.h>
 
 
 int main()
 {
 
-
-	std::cout << "Bonjour le monde!\n";
+	fmt::print("Bonjour le monde!\n");
 
 	std::cin.get();
 	return 0;

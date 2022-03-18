@@ -11,6 +11,8 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
 add_subdirectory(thirdparty/glfw-3.3.2)
 add_subdirectory(thirdparty/glad)
 add_subdirectory(thirdparty/stb_image)
@@ -20,6 +22,7 @@ add_subdirectory(thirdparty/raudio)
 add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
 add_subdirectory(thirdparty/cpu_features)
+add_subdirectory(thirdparty/fmt)
 
 if(WIN32)
 
@@ -73,7 +76,7 @@ elseif(UNIX)
 	target_link_libraries(pavo-gui PRIVATE libelfin)
 endif()
 
-target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui CpuFeatures)
+target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui CpuFeatures fmt-header-only)
 
 
 
@@ -104,7 +107,10 @@ target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli
 if(WIN32)
 
 elseif(UNIX)
-	target_link_libraries(pavo-cli PRIVATE libelfin imgui)
+	target_link_libraries(pavo-cli PRIVATE libelfin)
+
 endif()
 
-#target_link_libraries(pavo-cli PRIVATE )
+	target_link_libraries(pavo-cli PRIVATE imgui INTERFACE fmt::fmt-header-only)
+
+
