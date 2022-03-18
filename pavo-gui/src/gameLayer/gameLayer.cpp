@@ -5,7 +5,6 @@
 #include <iostream>
 #include <sstream>
 #include "imguiThemes.h"
-#include <cpuinfo_x86.h>
 
 gl2d::Renderer2D renderer;
 
