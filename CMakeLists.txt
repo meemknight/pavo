@@ -76,7 +76,7 @@ elseif(UNIX)
 	target_link_libraries(pavo-gui PRIVATE libelfin)
 endif()
 
-target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui CpuFeatures fmt-header-only)
+target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d raudio imgui CpuFeatures INTERFACE fmt-header-only)
 
 
 
