@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include "imguiThemes.h"
+#include "genericType.h"
 
 gl2d::Renderer2D renderer;
 
@@ -24,7 +25,7 @@ struct GameData
 bool initGame()
 {
 
-	//imguiThemes::yellow();
+	imguiThemes::yellow();
 
 	renderer.create();
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
@@ -90,49 +91,23 @@ bool gameLogic(float deltaTime)
 	}
 
 
-	if (platform::isKeyPressedOn(platform::Button::Enter))
+	if (platform::isKeyPressedOn(platform::Button::F) && platform::isKeyHeld(platform::Button::LeftCtrl))
 	{
 		platform::setFullScreen(!platform::isFullScreen());
 	}
 #pragma endregion
 
-	glm::vec4 colors[4] = { Colors_Orange, Colors_Orange, Colors_Orange, Colors_Orange };
-
-	{
-		colors[0].r = platform::getControllerButtons().LT;
-		colors[1].r = platform::getControllerButtons().RT;
-		colors[2].r = platform::getControllerButtons().LStick.x;
-		colors[3].r = platform::getControllerButtons().RStick.y;
-	}
-
-	renderer.renderRectangle({ 10,10, 100, 100 }, colors, {}, 30);
-
 	
-	renderer.renderRectangle({ gameData.posx,gameData.posy, 100, 100 }, { 0,0 }, 0, texture);
-
-	renderer.renderText({10,200}, std::to_string(gameData.test).c_str(), font, Colors_White, 1.5, 4.0, 3, false);
-
+	
 	//ImGui::ShowDemoWindow();
 
-
 	ImGui::Begin("Fereastra1");
-		ImGui::Text("text");
-
-		static char b[10] = {};
-
-		ImGui::SameLine();
-		if(ImGui::InputText("input", b, 9, ImGuiInputTextFlags_EnterReturnsTrue))
-		{
-			std::cout << b << "\n";
-		}
-
+	static GenericType reg = {};
+	genericTypeInput<__COUNTER__>(reg);
 
 	ImGui::End();
 
 
-		ImGui::Begin("Fereastra2");
-			ImGui::Text("text");
-		ImGui::End();
 
 
 

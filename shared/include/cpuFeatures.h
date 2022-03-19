@@ -18,3 +18,22 @@ using AVX_float_t = __m256;
 using AVX_double_t = __m256d;
 using AVX_int_t = __m256d;
 
+
+
+struct CpuFeatures
+{
+	//all 128 bit XMM registers
+	bool hasSSE = false;
+
+	//256 bit YMM floating point registers
+	bool hasAVX = false;
+	
+	//256 bit YMM integer registers
+	bool hasAVX2 = false;
+
+	friend CpuFeatures getCpuFeatures();
+
+private:
+	CpuFeatures() = default;
+
+};
