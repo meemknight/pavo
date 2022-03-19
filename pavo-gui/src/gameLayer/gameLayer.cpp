@@ -25,7 +25,7 @@ struct GameData
 bool initGame()
 {
 
-	imguiThemes::yellow();
+	imguiThemes::green();
 
 	renderer.create();
 	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
