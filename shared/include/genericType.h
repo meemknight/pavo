@@ -178,7 +178,7 @@ struct GenericType
 	template<class T>
 	T &getData() 
 	{
-		return *(*T)(&data);
+		return *(T*)(&data);
 	}
 
 };
