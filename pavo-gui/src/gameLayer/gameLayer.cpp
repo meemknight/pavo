@@ -1,16 +1,11 @@
+#include <glad/glad.h>
 #include "gameLayer.h"
-#include "gl2d/gl2d.h"
 #include "platformInput.h"
 #include "imgui.h"
 #include <iostream>
 #include <sstream>
 #include "imguiThemes.h"
 #include "genericType.h"
-
-gl2d::Renderer2D renderer;
-
-gl2d::Font font;
-gl2d::Texture texture;
 
 struct GameData
 {
@@ -27,10 +22,6 @@ bool initGame()
 
 	imguiThemes::green();
 
-	renderer.create();
-	font.createFromFile(RESOURCES_PATH "roboto_black.ttf");
-	texture.loadFromFile(RESOURCES_PATH "test.jpg");
-
 	if(!platform::readEntireFile(RESOURCES_PATH "gameData.data", &gameData, sizeof(GameData)))
 	{
 		gameData = GameData();
@@ -46,8 +37,9 @@ bool gameLogic(float deltaTime)
 	w= platform::getWindowSizeX();
 	h = platform::getWindowSizeY();
 	
-	renderer.updateWindowMetrics(w, h);
-	renderer.clearScreen();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glViewport(0, 0, w, h);
+
 #pragma endregion
 
 
@@ -108,13 +100,9 @@ bool gameLogic(float deltaTime)
 	ImGui::End();
 
 
-
-
-
 	//std::cout << platform::getTypedInput();
 
 #pragma region set finishing stuff
-	renderer.flush();
 
 	return true;
 #pragma endregion
