@@ -5,6 +5,9 @@ cmake_minimum_required(VERSION 3.16)
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug$<$<CONFIG:Debug>:Debug>")
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Release>:Release>")
 
+#enable avx on gcc
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mavx2")
+
 project(pavo-gui)
 
 set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)

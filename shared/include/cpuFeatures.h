@@ -19,7 +19,6 @@ using AVX_double_t = __m256d;
 using AVX_int_t = __m256d;
 
 
-
 struct CpuFeatures
 {
 	//all 128 bit XMM registers
@@ -37,3 +36,5 @@ private:
 	CpuFeatures() = default;
 
 };
+
+CpuFeatures getCpuFeatures();
