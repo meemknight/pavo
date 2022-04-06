@@ -9,3 +9,4 @@ LIBS = -lfmt
 
 #compiler
 CPPC = g++
+CC = cc
