@@ -7,6 +7,11 @@
 #include "../../thirdparty/linenoise/linenoise.h"
 #include <boost/algorithm/string.hpp>
 
+/* declarations */
+class debugger_t;
+class breakpoint_t;
+/* declarations */
+
 class debugger_t
 {
 public:
@@ -23,6 +28,12 @@ public:
 private:
         std::string_view prog;
         pid_t pid;
+};
+
+class breakpoint_t
+{
+public:
+private:
 };
 
 void debugger_t::run()
@@ -81,7 +92,7 @@ int main(const int argc, const char* argv[])
 {
         if(argc < 2)
         {
-                fmt::print(stderr, "Program name not specified\n");
+                fmt::print(stderr, "pavo: Program name not specified\n");
                 return EXIT_FAILURE;
         }
 
@@ -90,7 +101,7 @@ int main(const int argc, const char* argv[])
         const pid_t child_pid = fork();
         if(child_pid < 0)
         {
-                perror("fork():");
+                perror("fork");
                 return EXIT_FAILURE;
         }
 
@@ -99,7 +110,7 @@ int main(const int argc, const char* argv[])
                 const auto ret = ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
                 if(ret < 0)
                 {
-                        perror("ptrace():");
+                        perror("ptrace");
                         return EXIT_FAILURE;
                 }
 
