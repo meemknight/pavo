@@ -4,8 +4,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fmt/core.h>
-#include "../../thirdparty/linenoise/linenoise.h"
-#include <boost/algorithm/string.hpp>
+#include <linenoise.h>
+#include <genericType.h>
+#include <string_view>
+#include <vector>
 
 /* declarations */
 class debugger_t;
@@ -15,7 +17,7 @@ class breakpoint_t;
 class debugger_t
 {
 public:
-        debugger_t(const std::string_view prog, const pid_t pid)
+        debugger_t(const std::string_view prog, const PID pid)
             : prog(prog)
             , pid(pid)
         {
@@ -26,8 +28,8 @@ public:
         void continue_execution();
 
 private:
-        std::string_view prog;
-        pid_t pid;
+        std::string prog;
+        PID pid;
 };
 
 class breakpoint_t
@@ -51,7 +53,7 @@ void debugger_t::run()
                 }
 
                 std::string line = line_buf;
-                boost::trim(line);
+                boost::trim(line); //todo implement this
 
                 if(line.empty())
                 {
@@ -98,7 +100,7 @@ int main(const int argc, const char* argv[])
 
         const std::string_view prog_path = argv[1];
 
-        const pid_t child_pid = fork();
+        const PID child_pid = fork();
         if(child_pid < 0)
         {
                 perror("fork");

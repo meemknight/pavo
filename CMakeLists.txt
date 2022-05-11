@@ -23,6 +23,7 @@ add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
 add_subdirectory(thirdparty/cpu_features)
 add_subdirectory(thirdparty/fmt)
+add_subdirectory(thirdparty/linenoise)
 
 if(WIN32)
 
@@ -85,7 +86,7 @@ target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d
 ####################################################################################################################################################################################
 
 add_executable(pavo-cli)
-set_property(TARGET pavo-cli PROPERTY CXX_STANDARD 17)
+set_property(TARGET pavo-cli PROPERTY CXX_STANDARD 20)
 
 target_sources(pavo-cli PRIVATE ${PAVO-CLI-CPPS} ${PAVO-SHARED-CPPS} )
 
@@ -111,6 +112,7 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features)
+	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features lineNoise)
 
 
+add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")

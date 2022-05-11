@@ -5,9 +5,16 @@
 #include <string>
 #include "cpuFeatures.h"
 
-//todo(vlod) add vector types and CPU feature detector
 
+#if defined WIN32 || defined _WIN32 || defined __WIN32__ || defined __NT__
+#include <Windows.h>
 
+using PID = DWORD;
+using PROCESS = HANDLE;
+#elif defined __linux__ 
+using PID = pid_t;
+using PROCESS = PID;
+#endif
 
 //for imgui
 #ifdef _MSC_VER
