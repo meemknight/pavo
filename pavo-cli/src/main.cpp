@@ -66,7 +66,7 @@ void debugger_t::run()
 
 void debugger_t::handle_command(const std::string_view line)
 {
-        std::vector<std::string> args;
+        std::vector<std::string_view> args;
         boost::split(args, line, boost::is_any_of(" "), boost::token_compress_on);
 
         const std::string_view command = args.front();
@@ -117,6 +117,7 @@ int main(const int argc, const char* argv[])
                 const char* prog_str = prog_path.data();
                 execl(prog_str, prog_str, nullptr);
 
+                perror("execl");
                 return EXIT_FAILURE;
         }
         else
