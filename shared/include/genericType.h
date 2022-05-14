@@ -6,6 +6,16 @@
 #include "cpuFeatures.h"
 
 
+#if PAVO_WIN32
+#include <Windows.h>
+
+using PID = DWORD;
+using PROCESS = HANDLE;
+#elif defined PAVO_UNIX 
+using PID = pid_t;
+using PROCESS = PID;
+#endif
+
 //for imgui
 #ifdef _MSC_VER
 #define IM_PRId64   "I64d"
