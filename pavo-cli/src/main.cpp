@@ -1,4 +1,5 @@
 #include <iostream>
+#include <algorithm>
 #include <unistd.h>
 #include <sys/ptrace.h>
 #include <sys/types.h>
@@ -6,8 +7,8 @@
 #include <fmt/core.h>
 #include <linenoise.h>
 #include <genericType.h>
-#include <string_view>
 #include <vector>
+#include <stringutils.h>
 
 /* declarations */
 class debugger_t;
@@ -17,14 +18,14 @@ class breakpoint_t;
 class debugger_t
 {
 public:
-        debugger_t(const std::string_view prog, const PID pid)
+        debugger_t(const std::string prog, const PID pid)
             : prog(prog)
             , pid(pid)
         {
         }
 
         void run();
-        void handle_command(const std::string_view);
+        void handle_command(const std::string);
         void continue_execution();
 
 private:
@@ -53,7 +54,7 @@ void debugger_t::run()
                 }
 
                 std::string line = line_buf;
-                boost::trim(line); //todo implement this
+                trim(line);
 
                 if(line.empty())
                 {
@@ -66,12 +67,12 @@ void debugger_t::run()
         }
 }
 
-void debugger_t::handle_command(const std::string_view line)
+void debugger_t::handle_command(const std::string line)
 {
-        std::vector<std::string_view> args;
-        boost::split(args, line, boost::is_any_of(" "), boost::token_compress_on);
+        std::vector<std::string> args;
+        split(args, line);
 
-        const std::string_view command = args.front();
+        const std::string command = args.front();
         if(command == "continue")
         {
                 continue_execution();
@@ -98,7 +99,7 @@ int main(const int argc, const char* argv[])
                 return EXIT_FAILURE;
         }
 
-        const std::string_view prog_path = argv[1];
+        const std::string prog_path = argv[1];
 
         const PID child_pid = fork();
         if(child_pid < 0)
