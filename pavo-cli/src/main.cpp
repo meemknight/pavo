@@ -13,6 +13,7 @@
 #include <sys/personality.h>
 #include <sys/user.h>
 #include <optional>
+#include <misc.h>
 
 /* register stuff */
 enum class reg {
@@ -192,7 +193,7 @@ class breakpoint_t;
 class breakpoint_t
 {
 public:
-        breakpoint_t(const PID pid, std::intptr_t addr)
+        breakpoint_t(const PID pid, std::uint64_t addr)
             : pid(pid)
             , addr(addr)
         {
@@ -202,13 +203,13 @@ public:
         void disable();
 
         bool is_enabled() const;
-        std::intptr_t get_addr() const;
+        std::uint64_t get_addr() const;
 
         static constexpr std::uint64_t BOTTOM_BYTE_MASK = 0xff;
 
 private:
         PID pid;
-        std::intptr_t addr;
+        std::uint64_t addr;
         bool enabled;
         std::uint8_t saved_data;
 };
@@ -225,13 +226,19 @@ public:
         void run();
         void handle_command(const std::string);
         void continue_execution();
-        void set_breakpoint(const std::intptr_t addr);
+        void set_breakpoint(const std::uint64_t addr);
         void dump_registers();
+        std::uint64_t read_memory(const std::uint64_t addr);
+        void write_memory(const std::uint64_t addr, const std::uint64_t value);
+        std::uint64_t get_pc();
+        void set_pc(const std::uint64_t);
+        void step_over_breakpoint();
+        void wait_for_signal();
 
 private:
         std::string prog;
         PID pid;
-        std::unordered_map<std::intptr_t, breakpoint_t> breakpoints;
+        std::unordered_map<std::uint64_t, breakpoint_t> breakpoints;
 };
 
 void breakpoint_t::enable()
@@ -263,15 +270,14 @@ bool breakpoint_t::is_enabled() const
         return enabled;
 }
 
-std::intptr_t breakpoint_t::get_addr() const
+std::uint64_t breakpoint_t::get_addr() const
 {
         return addr;
 }
 
 void debugger_t::run()
 {
-        int wstatus;
-        waitpid(pid, &wstatus, 0);
+        wait_for_signal();
 
         char* line_buf = nullptr;
         while(true)
@@ -315,12 +321,9 @@ void debugger_t::handle_command(const std::string line)
                 }
 
                 const std::string str_addr(args[1], 2);
-                long addr = 0;
-                try
-                {
-                        addr = std::stol(str_addr, nullptr, 16);
-                }
-                catch(const std::invalid_argument& ex)
+
+                const auto opt_addr = u64_from_hex(str_addr);
+                if(!opt_addr)
                 {
                         fmt::print(stderr,
                                    "Expected address in hex format. Got: '{}' instead\n",
@@ -328,7 +331,7 @@ void debugger_t::handle_command(const std::string line)
                         return;
                 }
 
-                set_breakpoint(addr);
+                set_breakpoint(*opt_addr);
         }
         else if(command == "register")
         {
@@ -360,27 +363,65 @@ void debugger_t::handle_command(const std::string line)
                                 return;
                         }
 
-                        std::string val_str = args[3];
-                        std::uint64_t val = 0;
-                        try
+                        const std::string val_str = args[3];
+                        const auto opt_val = u64_from_hex(val_str);
+                        if(!opt_val)
                         {
-                                val = std::stoull(val_str, nullptr, 16);
-                        }
-                        catch(const std::invalid_argument&)
-                        {
-                                fmt::print(
-                                    stderr,
-                                    "Expected address in hex format. Got: '{}' instead\n",
-                                    val_str);
+                                fmt::print(stderr,
+                                           "Expected value in hex format. Got: '{}' instead\n",
+                                           val_str);
                                 return;
                         }
 
-                        set_register_value(pid, *reg, val);
+                        set_register_value(pid, *reg, *opt_val);
                         return;
                 }
 
                 fmt::print(stderr, "Error. Available 'register' commands: dump, read <reg>, "
                                    "write <reg> <value>\n");
+        }
+        else if(command == "memory")
+        {
+                std::uint64_t addr = 0;
+                if(args.size() > 2)
+                {
+                        const std::string str_addr = args[2];
+                        const auto opt_addr = u64_from_hex(str_addr);
+                        if(!opt_addr)
+                        {
+                                fmt::print(
+                                    stderr,
+                                    "Expected address in hex format. Got: '{}' instead\n",
+                                    str_addr);
+                                return;
+                        }
+
+                        addr = *opt_addr;
+                }
+
+                if(args.size() == 3)
+                {
+                        fmt::print("{:#018x}\n", read_memory(addr));
+                }
+
+                if(args.size() == 4)
+                {
+                        const std::string val_str = args[3];
+                        const auto opt_val = u64_from_hex(val_str);
+
+                        if(!opt_val)
+                        {
+                                fmt::print(stderr,
+                                           "Expected value in hex format. Got: '{}' instead\n",
+                                           val_str);
+                                return;
+                        }
+
+                        write_memory(addr, *opt_val);
+                }
+
+                fmt::print(stderr, "Error. Available 'memory' commands: read <addr>, "
+                                   "write <addr> <value>\n");
         }
         else
         {
@@ -390,13 +431,12 @@ void debugger_t::handle_command(const std::string line)
 
 void debugger_t::continue_execution()
 {
+        step_over_breakpoint();
         ptrace(PTRACE_CONT, pid, nullptr, nullptr);
-
-        int wstatus;
-        waitpid(pid, &wstatus, 0);
+        wait_for_signal();
 }
 
-void debugger_t::set_breakpoint(const std::intptr_t addr)
+void debugger_t::set_breakpoint(const std::uint64_t addr)
 {
         fmt::print("Breakpoint set at address {:#018x}\n", addr);
 
@@ -412,6 +452,52 @@ void debugger_t::dump_registers()
                 fmt::print("{} {:#018x}\n", reg_desc.name,
                            *get_register_value(pid, reg_desc.r));
         }
+}
+
+std::uint64_t debugger_t::read_memory(const std::uint64_t addr)
+{
+        return ptrace(PTRACE_PEEKDATA, pid, addr, nullptr);
+}
+
+void debugger_t::write_memory(const std::uint64_t addr, const std::uint64_t value)
+{
+        ptrace(PTRACE_POKEDATA, pid, addr, value);
+}
+
+std::uint64_t debugger_t::get_pc()
+{
+        return *get_register_value(pid, reg::rip);
+}
+
+void debugger_t::set_pc(const std::uint64_t val)
+{
+        set_register_value(pid, reg::rip, val);
+}
+
+void debugger_t::step_over_breakpoint()
+{
+        const std::uint64_t prev_location = get_pc() - 1;
+
+        if(contains(breakpoints, prev_location))
+        {
+                auto& bp = breakpoints.at(prev_location);
+
+                if(bp.is_enabled())
+                {
+                        set_pc(prev_location);
+
+                        bp.disable();
+                        ptrace(PTRACE_SINGLESTEP, pid, nullptr, nullptr);
+                        wait_for_signal();
+                        bp.enable();
+                }
+        }
+}
+
+void debugger_t::wait_for_signal()
+{
+        int wait_status;
+        waitpid(pid, &wait_status, 0);
 }
 
 int main(const int argc, const char* argv[])

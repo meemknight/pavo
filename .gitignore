@@ -6,3 +6,4 @@ build/
 CMakeSettings.json
 pavo
 *.o
+pavo-cli/src/compile_flags.txt
