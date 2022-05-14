@@ -402,6 +402,7 @@ void debugger_t::handle_command(const std::string line)
                 if(args.size() == 3)
                 {
                         fmt::print("{:#018x}\n", read_memory(addr));
+                        return;
                 }
 
                 if(args.size() == 4)
@@ -418,6 +419,7 @@ void debugger_t::handle_command(const std::string line)
                         }
 
                         write_memory(addr, *opt_val);
+                        return;
                 }
 
                 fmt::print(stderr, "Error. Available 'memory' commands: read <addr>, "
