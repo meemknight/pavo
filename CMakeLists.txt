@@ -26,6 +26,7 @@ add_subdirectory(thirdparty/glm)
 add_subdirectory(thirdparty/imgui-docking)
 add_subdirectory(thirdparty/cpu_features)
 add_subdirectory(thirdparty/fmt)
+add_subdirectory(thirdparty/linenoise)
 
 if(WIN32)
 
@@ -38,6 +39,7 @@ endif()
 file(GLOB_RECURSE PAVO-GUI-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/src/*.cpp")
 file(GLOB_RECURSE PAVO-SHARED-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/shared/src/*.cpp")
 file(GLOB_RECURSE PAVO-CLI-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli/src/*.cpp")
+file(GLOB_RECURSE PAVO-TESTS-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-tests/src/*.cpp")
 
 
 ####################################################################################################################################################################################
@@ -73,6 +75,7 @@ target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui
 target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/platform/")
 
 
+
 if(WIN32)
 
 elseif(UNIX)
@@ -88,7 +91,7 @@ target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image stb_truetype gl2d
 ####################################################################################################################################################################################
 
 add_executable(pavo-cli)
-set_property(TARGET pavo-cli PROPERTY CXX_STANDARD 17)
+set_property(TARGET pavo-cli PROPERTY CXX_STANDARD 20)
 
 target_sources(pavo-cli PRIVATE ${PAVO-CLI-CPPS} ${PAVO-SHARED-CPPS} )
 
@@ -98,6 +101,7 @@ endif()
 
 if(WIN32)
 	target_compile_definitions(pavo-cli PUBLIC PAVO_WIN32)
+
 elseif(UNIX)
 	target_compile_definitions(pavo-cli PUBLIC PAVO_UNIX) 
 else()
@@ -114,6 +118,46 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features)
+	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features lineNoise)
 
 
+###test program
+#add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
+
+
+
+
+####################################################################################################################################################################################
+#pavo-tests
+####################################################################################################################################################################################
+
+add_executable(pavo-tests)
+set_property(TARGET pavo-tests PROPERTY CXX_STANDARD 20)
+
+target_sources(pavo-tests PRIVATE ${PAVO-TESTS-CPPS} ${PAVO-SHARED-CPPS} )
+
+if(MSVC) # If using the VS compiler...
+	target_compile_definitions(pavo-tests PUBLIC _CRT_SECURE_NO_WARNINGS)
+endif()
+
+if(WIN32)
+	target_compile_definitions(pavo-tests PUBLIC PAVO_WIN32)
+
+elseif(UNIX)
+	target_compile_definitions(pavo-tests PUBLIC PAVO_UNIX) 
+else()
+	message(FATAL_ERROR "Pavo only supports windows and unix")
+endif()
+
+target_include_directories(pavo-tests PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared/include/")
+
+if(WIN32)
+
+elseif(UNIX)
+	target_link_libraries(pavo-tests PRIVATE libelfin)
+
+endif()
+
+	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features)
+
+add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
