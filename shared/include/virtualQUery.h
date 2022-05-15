@@ -1,5 +1,6 @@
 #pragma once
 #include "genericType.h"
+#include <sstream>
 
 
 enum
