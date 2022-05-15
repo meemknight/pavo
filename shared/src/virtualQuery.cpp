@@ -1,6 +1,6 @@
 #include "virtualQuery.h"
 
-#ifdef PAVO_WINDOWS
+#ifdef PAVO_WIN32
 
 OppenedQuery initVirtualQuery(PROCESS process)
 {

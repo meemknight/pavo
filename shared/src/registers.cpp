@@ -1,7 +1,9 @@
 #include "registers.h"
-#include <sys/ptrace.h>
 #include <algorithm>
+
+#ifdef PAVO_UNIX
 #include <sys/user.h>
+#include <sys/ptrace.h>
 
 std::optional<std::uint64_t> get_register_value(const PID pid, const reg r)
 {
@@ -101,3 +103,5 @@ std::optional<reg> get_register_from_name(const std::string& name)
 
         return reg_it->r;
 }
+
+#endif
