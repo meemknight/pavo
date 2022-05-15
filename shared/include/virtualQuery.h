@@ -15,7 +15,7 @@ enum
 
 };
 
-#if defined WIN32 || defined _WIN32 || defined __WIN32__ || defined __NT__
+#if PAVO_WIN32
 
 struct OppenedQuery
 {
@@ -26,7 +26,7 @@ struct OppenedQuery
 
 #endif
 
-#if defined __linux__
+#if defined PAVO_UNIX
 
 struct OppenedQuery
 {
