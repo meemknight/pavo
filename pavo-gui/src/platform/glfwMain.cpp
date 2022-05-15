@@ -5,7 +5,7 @@
 #include "gl2d/gl2d.h"
 #include <iostream>
 #include <ctime>
-#include "platformTools.h"
+#include "pavoAssert.h"
 #include "config.h"
 #include <raudio.h>
 #include "platformInput.h"
@@ -299,7 +299,7 @@ int main()
 
 	int w = 500;
 	int h = 500;
-	wind = glfwCreateWindow(w, h, "geam", nullptr, nullptr);
+	wind = glfwCreateWindow(w, h, "pavo", nullptr, nullptr);
 	glfwMakeContextCurrent(wind);
 	glfwSwapInterval(1);
 
@@ -310,12 +310,13 @@ int main()
 	glfwSetCursorPosCallback(wind, cursorPositionCallback);
 	glfwSetCharCallback(wind, characterCallback);
 
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 	permaAssertComment(gladLoadGL(), "err initializing glad");
 
 #pragma endregion
 
 #pragma region gl2d
-	gl2d::init();
+	//gl2d::init();
 #pragma endregion
 
 
@@ -342,7 +343,7 @@ int main()
 		}
 	
 		ImGui_ImplGlfw_InitForOpenGL(wind, true);
-		ImGui_ImplOpenGL3_Init("#version 330");
+		ImGui_ImplOpenGL3_Init("#version 120");
 	#endif
 #pragma endregion
 
