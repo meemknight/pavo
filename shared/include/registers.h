@@ -1,71 +1,82 @@
 #pragma once
+#include <array>
+#include <optional>
+#include <cstdint>
+#include <string>
+#include "genericType.h"
 
+enum class reg {
+        rax,
+        rbx,
+        rcx,
+        rdx,
+        rdi,
+        rsi,
+        rbp,
+        rsp,
+        r8,
+        r9,
+        r10,
+        r11,
+        r12,
+        r13,
+        r14,
+        r15,
+        rip,
+        rflags,
+        cs,
+        orig_rax,
+        fs_base,
+        gs_base,
+        fs,
+        gs,
+        ss,
+        ds,
+        es
+};
 
+constexpr std::size_t n_registers = 27;
 
-
-
-
-namespace registers
+struct reg_descriptor
 {
+        reg r;
+        int dwarf_r;
+        std::string name;
+};
 
-	
+const std::array<reg_descriptor, n_registers> register_descriptors{{
+    {reg::r15, 15, "r15"},
+    {reg::r14, 14, "r14"},
+    {reg::r13, 13, "r13"},
+    {reg::r12, 12, "r12"},
+    {reg::rbp, 6, "rbp"},
+    {reg::rbx, 3, "rbx"},
+    {reg::r11, 11, "r11"},
+    {reg::r10, 10, "r10"},
+    {reg::r9, 9, "r9"},
+    {reg::r8, 8, "r8"},
+    {reg::rax, 0, "rax"},
+    {reg::rcx, 2, "rcx"},
+    {reg::rdx, 1, "rdx"},
+    {reg::rsi, 4, "rsi"},
+    {reg::rdi, 5, "rdi"},
+    {reg::orig_rax, -1, "orig_rax"},
+    {reg::rip, -1, "rip"},
+    {reg::cs, 51, "cs"},
+    {reg::rflags, 49, "eflags"},
+    {reg::rsp, 7, "rsp"},
+    {reg::ss, 52, "ss"},
+    {reg::fs_base, 58, "fs_base"},
+    {reg::gs_base, 59, "gs_base"},
+    {reg::ds, 53, "ds"},
+    {reg::es, 50, "es"},
+    {reg::fs, 54, "fs"},
+    {reg::gs, 55, "gs"},
+}};
 
-	enum : int
-	{
-		rax = 0,
-		rbx, rcx, rdx,
-		rdi, rsi, rbp, rsp,
-		r8, r9, r10, r11,
-		r12, r13, r14, r15,
-		rip, rflags, cs,
-		orig_rax, fs_base,
-		gs_base,
-		fs, gs, ss, ds, es,
-
-		xmm0, xmm1, xmm2, xmm3, xmm4, xmm5, xmm6, xmm7,
-		xmm8, xmm9, xmm10, xmm11, xmm12, xmm13, xmm14, xmm15,
-
-		REGISTER_COUNT
-
-	};
-
-	const static char *registerNames[REGISTER_COUNT]{
-		"rax",
-		"rbx", "rcx", "rdx",
-		"rdi", "rsi", "rbp", "rsp",
-		"r8", "r9", "r10", "r11",
-		"r12", "r13", "r14", "r15",
-		"rip", "rflags", "cs",
-		"orig_rax", "fs_base",
-		"gs_base",
-		"fs", "gs", "ss", "ds", "es",
-
-		"xmm0", "xmm1", "xmm2", "xmm3", "xmm4", "xmm5", "xmm6", "xmm7",
-		"xmm8", "xmm9", "xmm10", "xmm11", "xmm12", "xmm13", "xmm14", "xmm15",
-
-	};
-
-
-	//page 58
-	//https://www.uclibc.org/docs/psABI-x86_64.pdf
-	const static int registerCode[REGISTER_COUNT]
-	{
-		0, 3, 2, 1, 
-		5, 4, 6, 7,
-
-		//r8 - r15
-		8, 9, 10, 11, 12, 13, 14, 15,
-
-		-1, 49, 51, -1, 58, 59, 54, 55, 52, 53, 50,
-
-		//xmm
-		17, 18, 19, 20, 21, 22, 23, 24,
-		25, 26, 27, 28, 29, 30, 31, 32,
-
-		//todo(vlod) YMM registers
-	};
-
-
-
-
-}
+std::optional<std::uint64_t> get_register_value(const PID pid, const reg r);
+int set_register_value(const PID pid, const reg r, const std::uint64_t value);
+std::optional<std::uint64_t>
+get_register_value_from_dwarf_register(const PID pid, const int reg_dwarf_r);
+std::optional<std::string> get_register_name(const reg r);
+std::optional<reg> get_register_from_name(const std::string& name);
