@@ -10,8 +10,6 @@ enum
 	memQueryFlags_Write = 0b0010,
 	memQueryFlags_Execute = 0b0100,
 	memQueryFlags_Comitted = 0b1000,
-
-
 };
 
 #if defined WIN32 || defined _WIN32 || defined __WIN32__ || defined __NT__
