@@ -17,6 +17,7 @@ AllowShortFunctionsOnASingleLine: None
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: None
 SpaceAfterTemplateKeyword: 'false'
+AlignArrayOfStructures: Right
 IndentCaseLabels: 'false'
 ColumnLimit: 95
 IndentWidth : '8'
