@@ -2,8 +2,10 @@
 #include <algorithm>
 
 #ifdef PAVO_UNIX
-#include <sys/user.h>
 #include <sys/ptrace.h>
+#include <sys/user.h>
+
+
 
 std::optional<std::uint64_t> get_register_value(const PID pid, const reg r)
 {
@@ -51,6 +53,8 @@ int set_register_value(const PID pid, const reg r, const std::uint64_t value)
         ptrace(PTRACE_SETREGS, pid, nullptr, &regs);
         return 0;
 }
+
+
 
 std::optional<std::uint64_t> get_register_value_from_dwarf_register(const PID pid,
                                                                     const int reg_dwarf_r)
@@ -105,3 +109,4 @@ std::optional<reg> get_register_from_name(const std::string& name)
 }
 
 #endif
+

@@ -38,7 +38,6 @@ public:
 
         static constexpr std::uint64_t BOTTOM_BYTE_MASK = 0xff;
 
-private:
         PID pid;
         std::uint64_t addr;
         bool enabled;
@@ -66,7 +65,6 @@ public:
         void step_over_breakpoint();
         void wait_for_signal();
 
-private:
         std::string prog;
         PID pid;
         std::unordered_map<std::uint64_t, breakpoint_t> breakpoints;

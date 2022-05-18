@@ -37,4 +37,5 @@ private:
 
 };
 
+//note (vlod): this is a singleton
 CpuFeatures getCpuFeatures();
