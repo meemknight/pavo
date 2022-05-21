@@ -27,6 +27,8 @@ add_subdirectory(thirdparty/imgui-docking)
 add_subdirectory(thirdparty/cpu_features)
 add_subdirectory(thirdparty/fmt)
 add_subdirectory(thirdparty/linenoise)
+add_subdirectory(thirdparty/Catch2-3.0.1)
+
 
 if(WIN32)
 
@@ -158,6 +160,6 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features)
+	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features catch2)
 
 add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")

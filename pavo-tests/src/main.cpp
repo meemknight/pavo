@@ -1,6 +1,12 @@
 #include <iostream>
 #include "virtualQuery.h"
 
+#undef min
+#undef max
+
+#include <catch_amalgamated.hpp>
+
+/*
 //todo move later
 //https://stackoverflow.com/questions/1387064/how-to-get-the-error-message-from-the-error-code-returned-by-getlasterror
 std::string getLastErrorString()
@@ -95,4 +101,23 @@ int main()
 	std::cin.ignore();
 	std::cin.get();
 	return 0;
+}
+*/
+
+
+unsigned int factorial(unsigned int number)
+{
+	return number <= 1 ? number : factorial(number - 1) * number;
+}
+
+TEST_CASE("Factorials are computed", "[factorial]") {
+	REQUIRE(factorial(1) == 1);
+	REQUIRE(factorial(2) == 2);
+	REQUIRE(factorial(3) == 6);
+	REQUIRE(factorial(10) == 3628800);
+
+	// This find a bug in the factorial implementation,
+	// try uncommenting it.
+	REQUIRE( factorial(0) == 1 );
+
 }
