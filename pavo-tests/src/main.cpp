@@ -4,7 +4,7 @@
 #undef min
 #undef max
 
-#include <catch_amalgamated.hpp>
+#include <catch2/catch_template_test_macros.hpp>
 
 /*
 //todo move later
@@ -120,4 +120,9 @@ TEST_CASE("Factorials are computed", "[factorial]") {
 	// try uncommenting it.
 	REQUIRE( factorial(0) == 1 );
 
+
+	//std::cin.get();
+	//std::cin.get();
+	//std::cin.get();
+	std::cin.get();
 }

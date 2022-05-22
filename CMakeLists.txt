@@ -16,6 +16,7 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_INSTALL OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
+
 add_subdirectory(thirdparty/glfw-3.3.2)
 add_subdirectory(thirdparty/glad)
 add_subdirectory(thirdparty/stb_image)
@@ -28,6 +29,8 @@ add_subdirectory(thirdparty/cpu_features)
 add_subdirectory(thirdparty/fmt)
 add_subdirectory(thirdparty/linenoise)
 add_subdirectory(thirdparty/Catch2-3.0.1)
+
+#find_package(Catch2 3 REQUIRED)
 
 
 if(WIN32)
@@ -160,6 +163,7 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features catch2)
+	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features Catch2::Catch2WithMain)
 
 add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
+
