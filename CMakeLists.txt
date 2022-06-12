@@ -30,15 +30,14 @@ add_subdirectory(thirdparty/fmt)
 add_subdirectory(thirdparty/linenoise)
 add_subdirectory(thirdparty/Catch2-3.0.1)
 
-#find_package(Catch2 3 REQUIRED)
-
-
 if(WIN32)
 
 elseif(UNIX)
 	add_subdirectory(thirdparty/libelfin-fbreg)
 endif()
 
+include(CTest)
+include(thirdparty/Catch2-3.0.1/extras/Catch.cmake)
 
 # Define PAVO-GUI-CPPS to be a list of all the source files for cli
 file(GLOB_RECURSE PAVO-GUI-CPPS CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/src/*.cpp")
@@ -163,7 +162,8 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features Catch2::Catch2WithMain)
+target_link_libraries(pavo-tests PRIVATE imgui fmt cpu_features Catch2::Catch2WithMain)
+catch_discover_tests(pavo-tests)
 
 add_executable(pavo-test "${CMAKE_CURRENT_SOURCE_DIR}/test/test.cpp")
 
