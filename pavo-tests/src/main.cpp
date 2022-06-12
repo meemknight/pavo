@@ -1,6 +1,12 @@
 #include <iostream>
 #include "virtualQuery.h"
 
+#undef min
+#undef max
+
+#include <catch2/catch_template_test_macros.hpp>
+
+
 //todo move later
 //https://stackoverflow.com/questions/1387064/how-to-get-the-error-message-from-the-error-code-returned-by-getlasterror
 std::string getLastErrorString()
@@ -28,7 +34,7 @@ std::string getLastErrorString()
 	return message;
 }
 
-int main()
+TEST_CASE("Correct memory flags", "[virtual query api]")
 {
 	PROCESS p = GetCurrentProcess();
 	OppenedQuery q = initVirtualQuery(p);
@@ -61,38 +67,41 @@ int main()
 	for(int i = 0; i < SIZE; i++)
 		allocated_memory[i] = VirtualAlloc(nullptr, sizes[i], allocType, virtualAllocFlags[i]);
 
-	// memory validation
-	std::string err_code[SIZE];
-	bool valid = true;
 	while (getNextQuery(q, low, high, flags))
 	{
 		for (int i = 0; i < SIZE; i++)
 			if (low == allocated_memory[i])
 			{
-					
-				if (flags != flagsArray[i])
-				{
-					err_code[i].append("flags ");
-					valid = false;
-				}
-
+				REQUIRE(flags == flagsArray[i]);
 				break;
 			}
 	}
 
 
-	if (!valid)
-	{
-		for (int i = 0; i < SIZE; i++)
-			if (!err_code[i].empty())
-				std::cout << "pentru zona " << i << " nu merge: " << err_code[i] << "\n";
-	}
-	else
-	{
-		std::cout << "e bine vere\n";
-	}
 
-	std::cin.ignore();
-	std::cin.get();
-	return 0;
 }
+
+
+
+//unsigned int factorial(unsigned int number)
+//{
+//	return number <= 1 ? number : factorial(number - 1) * number;
+//}
+//
+//TEST_CASE("Factorials are computed", "[factorial]")
+//{
+//	REQUIRE(factorial(1) == 1);
+//	REQUIRE(factorial(2) == 2);
+//	REQUIRE(factorial(3) == 6);
+//	REQUIRE(factorial(10) == 3628800);
+//
+//	// This find a bug in the factorial implementation,
+//	// try uncommenting it.
+//	//REQUIRE( factorial(0) == 1 );
+//
+//
+//	//std::cin.get();
+//	//std::cin.get();
+//	//std::cin.get();
+//	//std::cin.get();
+//}
