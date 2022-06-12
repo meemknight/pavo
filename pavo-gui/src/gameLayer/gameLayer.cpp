@@ -92,13 +92,10 @@ bool gameLogic(float deltaTime)
 #pragma endregion
 
 	
-	
-	ImGui::ShowDemoWindow();
 
 	ImGui::Begin("Pavo");
-	static GenericType reg = {};
-	genericTypeInput<__COUNTER__>(reg);
-	ImGui::Spacing();
+	//static GenericType reg = {};
+	//genericTypeInput<__COUNTER__>(reg);
 
 
 	//imgui_addons::ImGuiFileBrowser file_dialog;
@@ -122,7 +119,6 @@ bool gameLogic(float deltaTime)
 	}
 
 
-
 	static float wrap_width = 600.0f;
 	//ImGui::SliderFloat("Wrap width", &wrap_width, -20, 600, "%.0f");
 	ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -137,7 +133,7 @@ bool gameLogic(float deltaTime)
 
 	// Draw actual text bounding box, following by marker of our expected limit (should not overlap!)
 	draw_list->AddRect(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(255, 255, 0, 255));
-	draw_list->AddRectFilled(marker_min, marker_max, IM_COL32(255, 0, 255, 255));
+	//draw_list->AddRectFilled(marker_min, marker_max, IM_COL32(255, 0, 255, 255));
 	ImGui::PopTextWrapPos();
 
 	ImGui::Text("ceva");
