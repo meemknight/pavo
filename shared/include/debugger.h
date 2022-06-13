@@ -98,8 +98,8 @@ struct debugger_t
 	{
 	}
 
-	void handle_command(const std::string);
-	void handle_command(Command command);
+	CommandReturn handle_command(const std::string);
+        std::uint64_t handle_command(Command command);
 	void continue_execution();
 	void set_breakpoint(const std::uint64_t addr);
 	void dump_registers();
