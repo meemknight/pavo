@@ -1,3 +1,5 @@
+#pragma once
+
 static void trim(std::string& str)
 {
         const auto first_not_space = std::find_if(str.begin(), str.end(),

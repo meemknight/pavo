@@ -7,7 +7,7 @@
 
 
 
-std::optional<std::uint64_t> get_register_value(const PID pid, const reg r)
+std::optional<std::uint64_t> get_register_value(const PID pid, const Reg r)
 {
         const auto reg_it =
             std::find_if(register_descriptors.begin(), register_descriptors.end(),
@@ -29,7 +29,7 @@ std::optional<std::uint64_t> get_register_value(const PID pid, const reg r)
         return *(reinterpret_cast<std::uint64_t*>(&regs) + reg_idx);
 }
 
-int set_register_value(const PID pid, const reg r, const std::uint64_t value)
+int set_register_value(const PID pid, const Reg r, const std::uint64_t value)
 {
         const auto reg_it =
             std::find_if(register_descriptors.begin(), register_descriptors.end(),
@@ -91,7 +91,7 @@ std::optional<std::string> get_register_name(const reg r)
         return reg_it->name;
 }
 
-std::optional<reg> get_register_from_name(const std::string& name)
+std::optional<Reg> get_register_from_name(const std::string& name)
 {
         const auto reg_it =
             std::find_if(register_descriptors.begin(), register_descriptors.end(),
