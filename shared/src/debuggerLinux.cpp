@@ -173,15 +173,13 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
 
                 c.arguments.memory.adress = addr;
 
-                // todo check argument == "read"
-                if(args.size() == 3)
+                if(args.size() == 3 && args[1] == "read")
                 {
                         c.arguments.memory.action = c.arguments.memory.Read;
                         return {"", handle_command(c)};
                 }
 
-                // todo check argument == "write"
-                if(args.size() == 4)
+                if(args.size() == 4 && args[1] == "write")
                 {
                         c.arguments.memory.action = c.arguments.memory.Write;
 
