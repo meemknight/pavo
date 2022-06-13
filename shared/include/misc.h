@@ -1,8 +1,11 @@
 #pragma once
 
 #include <stdexcept>
+#include <optional>
+#include <stdint.h>
+#include <string>
 
-std::optional<std::uint64_t> u64_from_hex(const std::string& str_)
+inline std::optional<std::uint64_t> u64_from_hex(const std::string& str_)
 {
         std::uint64_t val = 0;
         try
