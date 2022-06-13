@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdexcept>
+
 std::optional<std::uint64_t> u64_from_hex(const std::string& str_)
 {
         std::uint64_t val = 0;

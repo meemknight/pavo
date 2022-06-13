@@ -74,7 +74,7 @@ const std::array<reg_descriptor, n_registers> register_descriptors{{
 	{Reg::gs, 55, "gs"},
 }};
 
-std::optional<std::uint64_t> get_register_value(const PID pid, const reg r);
+std::optional<std::uint64_t> get_register_value(const PID pid, const Reg r);
 int set_register_value(const PID pid, const Reg r, const std::uint64_t value);
 std::optional<std::uint64_t>
 get_register_value_from_dwarf_register(const PID pid, const int reg_dwarf_r);

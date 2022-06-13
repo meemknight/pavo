@@ -74,7 +74,7 @@ std::optional<std::uint64_t> get_register_value_from_dwarf_register(const PID pi
         return get_register_value(pid, reg_it->r);
 }
 
-std::optional<std::string> get_register_name(const reg r)
+std::optional<std::string> get_register_name(const Reg r)
 {
         const auto reg_it =
             std::find_if(register_descriptors.begin(), register_descriptors.end(),
