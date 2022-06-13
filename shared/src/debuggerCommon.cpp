@@ -2,6 +2,7 @@
 #include "stringutils.h"
 #include "fmt/core.h"
 #include "misc.h"
+#include <vector>
 
 debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
 {

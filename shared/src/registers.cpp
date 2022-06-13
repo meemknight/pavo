@@ -24,7 +24,7 @@ std::optional<std::uint64_t> get_register_value(const PROCESS process, const Reg
 		const auto reg_idx = reg_it - register_descriptors.begin();
 
 		user_regs_struct regs;
-		ptrace(PTRACE_GETREGS, pid, nullptr, &regs);
+		ptrace(PTRACE_GETREGS, process, nullptr, &regs);
 
 		return *(reinterpret_cast<std::uint64_t*>(&regs) + reg_idx);
 }
@@ -46,11 +46,11 @@ int set_register_value(const PROCESS process, const Reg r, const std::uint64_t v
 		const auto reg_idx = reg_it - register_descriptors.begin();
 
 		user_regs_struct regs;
-		ptrace(PTRACE_GETREGS, pid, nullptr, &regs);
+		ptrace(PTRACE_GETREGS, process, nullptr, &regs);
 
 		*(reinterpret_cast<std::uint64_t*>(&regs) + reg_idx) = value;
 
-		ptrace(PTRACE_SETREGS, pid, nullptr, &regs);
+		ptrace(PTRACE_SETREGS, process, nullptr, &regs);
 		return 0;
 }
 
@@ -71,7 +71,7 @@ std::optional<std::uint64_t> get_register_value_from_dwarf_register(const PROCES
 				return std::nullopt;
 		}
 
-		return get_register_value(pid, reg_it->r);
+		return get_register_value(process, reg_it->r);
 }
 
 std::optional<std::string> get_register_name(const Reg r)
