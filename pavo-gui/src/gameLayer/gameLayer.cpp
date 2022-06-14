@@ -12,10 +12,7 @@
 
 struct GameData
 {
-	float posx=100;
-	float posy=100;
 
-	int test = 0;
 
 }gameData;
 
@@ -55,44 +52,6 @@ bool gameLogic(float deltaTime)
 
 
 #pragma region input
-	float speed = 400 * deltaTime;
-
-	if(platform::isKeyHeld(platform::Button::Up) 
-		|| platform::getControllerButtons().buttons[platform::ControllerButtons::Up].held
-		)
-	{
-		gameData.posy -= speed;
-	}
-	if (platform::isKeyHeld(platform::Button::Down)
-		|| platform::getControllerButtons().buttons[platform::ControllerButtons::Down].held
-		)
-	{
-		gameData.posy += speed;
-	}
-	if (platform::isKeyHeld(platform::Button::Left)
-		|| platform::getControllerButtons().buttons[platform::ControllerButtons::Left].held
-		)
-	{
-		gameData.posx -= speed;
-	}
-	if (platform::isKeyHeld(platform::Button::Right)
-		|| platform::getControllerButtons().buttons[platform::ControllerButtons::Right].held
-		)
-	{
-		gameData.posx += speed;
-	}
-
-	if (platform::isKeyTyped(platform::Button::NR1)
-		)
-	{
-		gameData.test -= 1;
-	}
-	if (platform::isKeyTyped(platform::Button::NR2)
-		)
-	{
-		gameData.test += 1;
-	}
-
 
 	if (platform::isKeyPressedOn(platform::Button::F) && platform::isKeyHeld(platform::Button::LeftCtrl))
 	{
