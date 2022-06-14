@@ -99,6 +99,11 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 	return {};
 }
 
+PROCESS debugger_t::run_program(const char* str)
+{
+        return {};
+}
+
 #pragma endregion
 
 
