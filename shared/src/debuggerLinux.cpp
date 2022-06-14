@@ -15,7 +15,6 @@
 #include "fmt/format.h"
 #include <fstream>
 
-
 #include "elf++.hh"
 #include "dwarf++.hh"
 #include <unistd.h>
@@ -238,9 +237,11 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
                         return it;
                 }
 
+                throw std::out_of_range{"Line entry not found!"};
                 return std::nullopt;
         }
 
+        throw std::out_of_range{"Line entry not found!"};
         return std::nullopt;
 }
 

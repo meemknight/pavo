@@ -21,6 +21,8 @@ void run(debugger_t& debugger)
         debugger.wait_for_signal();
         debugger.init_load_addr();
 
+        fmt::print(stderr, "Load address: {:#018x}\n", debugger.load_address);
+
         char* line_buf = nullptr;
         while(true)
         {

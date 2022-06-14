@@ -174,7 +174,7 @@ std::uint64_t debugger_t::handle_command(Command command)
         }
         case Command::Type::StepInstruction:
         {
-                single_step_instruction();
+                single_step_instruction_check_br();
                 auto line_entry = *get_line_entry_from_pc(get_pc());
                 print_source(line_entry->file->path, line_entry->line, 2);
                 break;
