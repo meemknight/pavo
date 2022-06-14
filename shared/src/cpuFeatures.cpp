@@ -3,7 +3,7 @@
 
 static const cpu_features::X86Features detectedFeatures = cpu_features::GetX86Info().features;
 
-static CpuFeatures getCpuFeatures()
+CpuFeatures getCpuFeatures()
 {
 	CpuFeatures features;
 	
