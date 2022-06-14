@@ -13,7 +13,7 @@ inline std::optional<std::uint64_t> u64_from_hex(const std::string& str_)
                 const std::string str{str_, 2};
                 val = std::stoull(str, nullptr, 16);
         }
-        catch(const std::invalid_argument&)
+        catch(const std::exception&)
         {
                 return std::nullopt;
         }

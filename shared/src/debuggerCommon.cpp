@@ -25,9 +25,9 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                         return {fmt::format("Missing 'break' argument '0x<ADDRESS>'\n"), 0};
                 }
 
-                const std::string str_addr(args[1], 2);
+                const std::string str_addr = args[1];
+                const auto opt_addr        = u64_from_hex(str_addr);
 
-                const auto opt_addr = u64_from_hex(str_addr);
                 if(!opt_addr)
                 {
                         return {
