@@ -14,20 +14,18 @@ using PROCESS = HANDLE;
 
 namespace dwarf_wrapper
 {
-        struct dwarf
-        {
-                dwarf(auto&&...) {}
-        };
-
-        struct die {};
-
+        struct dwarf { dwarf(auto&&...) {} };
+        struct die   { die(auto&&...)   {} };
         struct line_table
         {
-                struct iterator {};
+                line_table(auto&&...) {}
+                struct iterator { iterator(auto&&...) {} };
         };
 
         struct elf
         {
+                elf(auto&&...) {}
+
                 static int create_loader(auto&&...)
                 {
                         return 0;
@@ -37,10 +35,7 @@ namespace dwarf_wrapper
 
 namespace elf_wrapper
 {
-        struct elf
-        {
-                elf(auto&&...) {}
-        };
+        struct elf { elf(auto&&...) {} };
 
         int create_mmap_loader(auto&&...)
         {
