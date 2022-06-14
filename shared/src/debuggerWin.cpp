@@ -33,18 +33,17 @@ std::uint64_t breakpoint_t::get_addr() const
 
 #pragma region debugger
 
-debugger_t::debugger_t(const std::string progName, const PROCESS process)
+bool debugger_t::start(const std::string progName)
 {
-}
+	const PROCESS child = debugger_t::run_program(progName);
+	if (child == 0)
+	{
+		return 0;
+	}
 
-CommandReturn debugger_t::handle_command(const std::string)
-{
-		return {};
-}
-
-std::uint64_t debugger_t::handle_command(Command command)
-{
-		return {};
+	this->progName = progName;
+	this->process = child;
+	return 1;
 }
 
 void debugger_t::continue_execution()
@@ -98,7 +97,7 @@ std::uint64_t debugger_t::offset_load_address(const std::uint64_t)
 
 std::optional<dwarf_wrapper::die> debugger_t::get_function_from_pc(const std::uint64_t)
 {
-		return dwarf_wrapper::die(1);
+		return dwarf_wrapper::die();
 }
 
 std::optional<dwarf_wrapper::line_table>
@@ -131,8 +130,8 @@ void debugger_t::single_step_instruction_check_br()
 
 PROCESS debugger_t::run_program(const std::string &path)
 {
-	
-	return 0;
+	//todo implement
+	return HANDLE(1);
 }
 
 

@@ -128,7 +128,7 @@ elseif(UNIX)
 		   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg
 		)
 
-		target_link_libraries(pavo-cli PRIVATE
+		target_link_libraries(pavo-cli PRIVATE lineNoise
 							  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
 							  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/libelf++.so)
 
@@ -136,7 +136,7 @@ elseif(UNIX)
 
 endif()
 
-	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features lineNoise)
+	target_link_libraries(pavo-cli PRIVATE imgui fmt cpu_features)
 
 
 ###test program

@@ -5,8 +5,14 @@ std::string DebuggerWindow::start(std::string name, int id)
 	this->name = name;
 	this->id = id;
 
+	if (!debugger.start(name))
+	{
+		return "error, couldn't open process";
+
+	}
+
 	//no error
-	return "error, couldn't fint the\npath specified.";
+	return "";
 }
 
 bool DebuggerWindow::render()
