@@ -34,7 +34,9 @@ Todo and Features
 Technologies used: 
 
 * cpp
+* c
 * cmake
+* make
 
 Libraries:
 
