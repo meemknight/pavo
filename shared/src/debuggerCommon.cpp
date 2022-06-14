@@ -8,7 +8,7 @@ debugger_t::debugger_t(const std::string progName, const PROCESS process)
 	: progName(progName)
 	, process(process)
 {
-		const auto fd = open(progName.c_str(), O_RDONLY);
+		const auto fd = generic_open(progName);
 		elf           = elf_wrapper::elf{elf_wrapper::create_mmap_loader(fd)};
 		dwarf         = dwarf_wrapper::dwarf{dwarf_wrapper::elf::create_loader(elf)};
 }
