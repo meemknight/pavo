@@ -2,7 +2,7 @@
 # Typically uses the major version.
 SONAME = 0
 
-CXXFLAGS+=-g -O2 -Werror
+CXXFLAGS+=-g -O2
 override CXXFLAGS+=-std=c++0x -Wall -fPIC
 
 all: libdwarf++.a libdwarf++.so.$(SONAME) libdwarf++.so libdwarf++.pc
