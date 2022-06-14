@@ -18,6 +18,12 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
 
                 return {"", handle_command(c)};
         }
+        else if(command == "stepi")
+        {
+                Command c = {};
+                c.type    = Command::Type::StepInstruction;
+                return {"", handle_command(c)};
+        }
         else if(command == "break")
         {
                 if(args.size() < 2)
@@ -164,6 +170,13 @@ std::uint64_t debugger_t::handle_command(Command command)
         case Command::Type::Continue:
         {
                 continue_execution();
+                break;
+        }
+        case Command::Type::StepInstruction:
+        {
+                single_step_instruction();
+                auto line_entry = *get_line_entry_from_pc(get_pc());
+                print_source(line_entry->file->path, line_entry->line, 2);
                 break;
         }
         case Command::Type::Break:

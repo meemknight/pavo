@@ -6,7 +6,7 @@ std::string DebuggerWindow::start(std::string name, int id)
 	this->id = id;
 
 	//no error
-	return "error";
+	return "error, couldn't fint the\npath specified.";
 }
 
 bool DebuggerWindow::render()

@@ -11,9 +11,45 @@
 
 using PID = DWORD;
 using PROCESS = HANDLE;
+
+namespace dwarf_wrapper
+{
+        struct dwarf { dwarf(auto&&...) {} };
+        struct die   { die(auto&&...)   {} };
+        struct line_table
+        {
+                line_table(auto&&...) {}
+                struct iterator { iterator(auto&&...) {} };
+        };
+
+        struct elf
+        {
+                elf(auto&&...) {}
+
+                static int create_loader(auto&&...)
+                {
+                        return 0;
+                }
+        };
+}
+
+namespace elf_wrapper
+{
+        struct elf { elf(auto&&...) {} };
+
+        int create_mmap_loader(auto&&...)
+        {
+                return 0;
+        }
+}
+
 #elif defined PAVO_UNIX 
 using PID = pid_t;
 using PROCESS = PID;
+#include "elf++.hh"
+#include "dwarf++.hh"
+namespace dwarf_wrapper = dwarf;
+namespace elf_wrapper   = elf;
 #endif
 
 //for imgui
