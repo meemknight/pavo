@@ -30,12 +30,13 @@ struct CpuFeatures
 	//256 bit YMM integer registers
 	bool hasAVX2 = false;
 
-	friend CpuFeatures getCpuFeatures();
+
+	//note (vlod): this is a singleton
+	CpuFeatures getCpuFeatures();
+
 
 private:
 	CpuFeatures() = default;
 
 };
 
-//note (vlod): this is a singleton
-CpuFeatures getCpuFeatures();
