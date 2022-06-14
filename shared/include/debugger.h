@@ -122,7 +122,7 @@ struct debugger_t
         void single_step_instruction();
         void single_step_instruction_check_br();
 
-        static PROCESS run_program(const char* str);
+        static PROCESS run_program(const std::string& path);
 
         std::string progName;
         PROCESS process;

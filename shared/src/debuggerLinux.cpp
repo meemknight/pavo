@@ -244,9 +244,34 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
         return std::nullopt;
 }
 
-PROCESS debugger_t::run_program(const char* str)
+PROCESS debugger_t::run_program(const std::string& path)
 {
-        return execl(str, str, nullptr);
+        const PID child_pid = fork();
+        if(child_pid < 0)
+        {
+                perror("fork");
+                return EXIT_FAILURE;
+        }
+
+        if(child_pid == 0)
+        {
+                personality(ADDR_NO_RANDOMIZE);
+                const auto ret = ptrace(PTRACE_TRACEME, 0, nullptr, nullptr);
+                if(ret < 0)
+                {
+                        perror("ptrace");
+                        exit(EXIT_FAILURE);
+                }
+
+                const char* prog_str = path.c_str();
+                debugger_t::run_program(prog_str);
+                execl(prog_str, prog_str, nullptr);
+
+                perror("execl");
+                exit(EXIT_FAILURE);
+        }
+
+        return child_pid;
 }
 
 void debugger_t::print_source(const std::string& filename, const unsigned line,
