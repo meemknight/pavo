@@ -125,9 +125,10 @@ namespace dwarf_wrapper
 	
 	namespace elf
 	{
-		auto create_loader(auto&& arg)
+                template<typename T>
+		auto create_loader(T&& arg)
 		{
-				return ::dwarf::elf::create_loader(std::forward<decltype(arg)>(arg));
+				return ::dwarf::elf::create_loader(std::forward<T>(arg));
 		}
 	} // namespace elf
 	
