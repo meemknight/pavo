@@ -24,3 +24,5 @@ User Stories
 8. As a user I want the debugger to run smoothly.
 
 9. A multy language feature would be desired if possible.
+
+10. As a user I want to see allocated memory using a hex editor program.
