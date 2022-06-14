@@ -87,6 +87,7 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                         }
 
                         c.args.r_args.type  = c.args.r_args.Write;
+                        c.args.r_args.reg   = *reg;
                         c.args.r_args.value = *opt_val;
 
                         return {"", handle_command(c)};
