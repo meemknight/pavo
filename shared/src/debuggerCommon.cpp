@@ -36,9 +36,9 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                             0};
                 }
 
-                Command c                 = {};
-                c.type                    = Command::Type::Break;
-                c.arguments.breac.address = opt_addr.value();
+                Command c             = {};
+                c.type                = Command::Type::Break;
+                c.args.b_args.address = opt_addr.value();
 
                 return {"", handle_command(c)};
         }
@@ -49,7 +49,7 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
 
                 if(args.size() == 2 && args[1] == "dump")
                 {
-                        c.arguments.regizter.type = c.arguments.regizter.Dump;
+                        c.args.r_args.type = c.args.r_args.Dump;
                         return {"", handle_command(c)};
                 }
 
@@ -61,8 +61,8 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                                 return {fmt::format("No such register: {}\n", args[2]), 0};
                         }
 
-                        c.arguments.regizter.type = c.arguments.regizter.Read;
-                        c.arguments.regizter.reg  = *reg;
+                        c.args.r_args.type = c.args.r_args.Read;
+                        c.args.r_args.reg  = *reg;
 
                         return {"", handle_command(c)};
                 }
@@ -86,8 +86,8 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                                     0};
                         }
 
-                        c.arguments.regizter.type  = c.arguments.regizter.Write;
-                        c.arguments.regizter.value = *opt_val;
+                        c.args.r_args.type  = c.args.r_args.Write;
+                        c.args.r_args.value = *opt_val;
 
                         return {"", handle_command(c)};
                 }
@@ -118,17 +118,17 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                         addr = *opt_addr;
                 }
 
-                c.arguments.memory.adress = addr;
+                c.args.m_args.adress = addr;
 
                 if(args.size() == 3 && args[1] == "read")
                 {
-                        c.arguments.memory.action = c.arguments.memory.Read;
+                        c.args.m_args.type = c.args.m_args.Read;
                         return {"", handle_command(c)};
                 }
 
                 if(args.size() == 4 && args[1] == "write")
                 {
-                        c.arguments.memory.action = c.arguments.memory.Write;
+                        c.args.m_args.type = c.args.m_args.Write;
 
                         const std::string val_str = args[3];
                         const auto opt_val        = u64_from_hex(val_str);
@@ -142,7 +142,7 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                                     0};
                         }
 
-                        c.arguments.memory.value = *opt_val;
+                        c.args.m_args.value = *opt_val;
                         return {"", handle_command(c)};
                 }
 
@@ -161,54 +161,64 @@ std::uint64_t debugger_t::handle_command(Command command)
         switch(command.type)
         {
         case Command::Type::Continue:
+        {
                 continue_execution();
                 break;
-
+        }
         case Command::Type::Break:
-                set_breakpoint(command.arguments.breac.address);
+        {
+                set_breakpoint(command.args.b_args.address);
                 break;
-
+        }
         case Command::Type::Register:
-                switch(command.arguments.regizter.type)
+        {
+                switch(command.args.r_args.type)
                 {
-
-                case command.arguments.regizter.Dump:
+                case command.args.r_args.Dump:
+                {
                         dump_registers();
                         break;
-
-                case command.arguments.regizter.Read:
-                        fmt::print("{}\n", *get_register_value(
-                                               process, command.arguments.regizter.reg));
-
-                        return *get_register_value(process, command.arguments.regizter.reg);
-
-                case command.arguments.regizter.Write:
-
-                        set_register_value(process, command.arguments.regizter.reg,
-                                           command.arguments.regizter.value);
-
-                        break;
                 }
-                break;
-
-        case Command::Type::Memory:
-
-                switch(command.arguments.memory.action)
+                case command.args.r_args.Read:
                 {
-                case command.arguments.memory.Read:
-                        fmt::print("{:#018x}\n", read_memory(command.arguments.memory.adress));
-                        return read_memory(command.arguments.memory.adress);
+                        fmt::print("{}\n",
+                                   *get_register_value(process, command.args.r_args.reg));
 
-                case command.arguments.memory.Write:
-                        write_memory(command.arguments.memory.adress,
-                                     command.arguments.memory.value);
+                        return *get_register_value(process, command.args.r_args.reg);
+                }
+                case command.args.r_args.Write:
+                {
+                        set_register_value(process, command.args.r_args.reg,
+                                           command.args.r_args.value);
+
                         break;
+                }
                 }
 
                 break;
+        }
+        case Command::Type::Memory:
+        {
+                switch(command.args.m_args.type)
+                {
+                case command.args.m_args.Read:
+                {
+                        fmt::print("{:#018x}\n", read_memory(command.args.m_args.adress));
+                        return read_memory(command.args.m_args.adress);
+                }
+                case command.args.m_args.Write:
+                {
+                        write_memory(command.args.m_args.adress, command.args.m_args.value);
+                        break;
+                }
+                }
 
-        default:
                 break;
+        }
+        default:
+        {
+                break;
+        }
         }
 
         return 0;
