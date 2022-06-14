@@ -11,24 +11,24 @@
 struct breakpoint_t
 {
 
-        breakpoint_t(){};
+		breakpoint_t(){};
 
-        breakpoint_t(const PROCESS process, std::uint64_t addr)
-            : process(process)
-            , addr(addr)
-        {
-        }
+		breakpoint_t(const PROCESS process, std::uint64_t addr)
+			: process(process)
+			, addr(addr)
+		{
+		}
 
-        void enable();
-        void disable();
+		void enable();
+		void disable();
 
-        bool is_enabled() const;
-        std::uint64_t get_addr() const;
+		bool is_enabled() const;
+		std::uint64_t get_addr() const;
 
-        PROCESS process         = 0;
-        std::uint64_t addr      = 0;
-        bool enabled            = 0;
-        std::uint8_t saved_data = 0;
+		PROCESS process         = 0;
+		std::uint64_t addr      = 0;
+		bool enabled            = 0;
+		std::uint8_t saved_data = 0;
 };
 
 struct Command
@@ -42,54 +42,54 @@ struct Command
                 Memory,
         };
 
-        struct Break_args
-        {
-                std::uint64_t address = 0;
-        };
+		struct Break_args
+		{
+				std::uint64_t address = 0;
+		};
 
-        struct Register_args
-        {
-                enum Action {
-                        None = 0,
-                        Dump,
-                        Read,
-                        Write,
-                };
+		struct Register_args
+		{
+				enum Action {
+						None = 0,
+						Dump,
+						Read,
+						Write,
+				};
 
-                int type            = Action::None;
-                Reg reg             = {};
-                std::uint64_t value = 0;
-        };
+				int type            = Action::None;
+				Reg reg             = {};
+				std::uint64_t value = 0;
+		};
 
-        struct Memory_args
-        {
-                enum Action {
-                        None = 0,
-                        Read,
-                        Write,
-                };
+		struct Memory_args
+		{
+				enum Action {
+						None = 0,
+						Read,
+						Write,
+				};
 
-                int type             = Action::None;
-                std::uint64_t adress = 0;
-                std::uint64_t value  = 0;
-        };
+				int type             = Action::None;
+				std::uint64_t adress = 0;
+				std::uint64_t value  = 0;
+		};
 
-        int type = Type::None;
-        union
-        {
-                Break_args b_args;
-                Register_args r_args;
-                Memory_args m_args;
-        } args;
+		int type = Type::None;
+		union
+		{
+				Break_args b_args;
+				Register_args r_args;
+				Memory_args m_args;
+		} args;
 };
 
 struct debugger_t
 {
-        struct CommandReturn
-        {
-                std::string error   = "";
-                std::uint64_t value = 0;
-        };
+		struct CommandReturn
+		{
+				std::string error   = "";
+				std::uint64_t value = 0;
+		};
 
         debugger_t(const std::string progName, const PROCESS process)
             : progName(progName)
