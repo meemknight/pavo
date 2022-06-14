@@ -290,6 +290,24 @@ siginfo_t debugger_t::get_signal_info()
         return info;
 }
 
+void debugger_t::single_step_instruction()
+{
+        ptrace(PTRACE_SINGLESTEP, process, nullptr, nullptr);
+        wait_for_signal();
+}
+
+void debugger_t::single_step_instruction_check_br()
+{
+        if(contains(breakpoints, get_pc()))
+        {
+                step_over_breakpoint();
+        }
+        else
+        {
+                single_step_instruction();
+        }
+}
+
 #pragma endregion
 
 #endif

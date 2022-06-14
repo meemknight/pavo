@@ -37,6 +37,7 @@ struct Command
         enum Type {
                 None = 0,
                 Continue,
+                StepInstruction,
                 Break,
                 Register,
                 Memory,
@@ -118,6 +119,8 @@ struct debugger_t
         void print_source(const std::string&, const unsigned line, const unsigned context = 2);
         siginfo_t get_signal_info();
         void handle_sigtrap(siginfo_t);
+        void single_step_instruction();
+        void single_step_instruction_check_br();
 
         static PROCESS run_program(const char* str);
 
