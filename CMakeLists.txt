@@ -75,11 +75,12 @@ if(WIN32)
 elseif(UNIX)
 	target_compile_definitions(pavo-gui PUBLIC PAVO_UNIX) 
 
-        target_link_libraries(pavo-gui SHARED lineNoise
-                                                  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
-                                                  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/libelf++.so)
+		target_link_libraries(pavo-gui PRIVATE lineNoise
+			${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
+			${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/libelf++.so)
 
-        add_dependencies(pavo-gui libelfin)
+		#add_dependencies(pavo-gui libelfin)
+
 
 else()
 	message(FATAL_ERROR "Pavo only supports windows and unix" )
@@ -98,7 +99,9 @@ target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdpar
 if(WIN32)
 
 elseif(UNIX)
-        target_link_libraries(pavo-gui SHARED libelfin)
+		#target_link_libraries(pavo-gui SHARED libelfin)
+		add_dependencies(pavo-gui libelfin)
+
 endif()
 
 target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image
@@ -182,7 +185,6 @@ target_include_directories(pavo-tests PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared
 if(WIN32)
 
 elseif(UNIX)
-		#target_link_libraries(pavo-tests PRIVATE libelfin)
 
 endif()
 
