@@ -7,9 +7,6 @@
 
 #include "genericType.h"
 #include "registers.h"
-#include "elf++.hh"
-#include "dwarf++.hh"
-
 
 struct breakpoint_t
 {
@@ -99,8 +96,8 @@ struct debugger_t
             , process(process)
         {
                 const auto fd = open(progName.c_str(), O_RDONLY);
-                elf           = elf::elf{elf::create_mmap_loader(fd)};
-                dwarf         = dwarf::dwarf{dwarf::elf::create_loader(elf)};
+                elf           = elf_wrapper::elf{elf_wrapper::create_mmap_loader(fd)};
+                dwarf         = dwarf_wrapper::dwarf{dwarf_wrapper::elf::create_loader(elf)};
         }
 
         CommandReturn handle_command(const std::string);
@@ -116,8 +113,9 @@ struct debugger_t
         void wait_for_signal();
         void init_load_addr();
         std::uint64_t offset_load_address(const std::uint64_t);
-        std::optional<dwarf::die> get_function_from_pc(const std::uint64_t);
-        std::optional<dwarf::line_table::iterator> get_line_entry_from_pc(const std::uint64_t);
+        std::optional<dwarf_wrapper::die> get_function_from_pc(const std::uint64_t);
+        std::optional<dwarf_wrapper::line_table::iterator>
+        get_line_entry_from_pc(const std::uint64_t);
         void print_source(const std::string&, const unsigned line, const unsigned context = 2);
         siginfo_t get_signal_info();
         void handle_sigtrap(siginfo_t);
@@ -129,7 +127,7 @@ struct debugger_t
         std::string progName;
         PROCESS process;
         std::unordered_map<std::uint64_t, breakpoint_t> breakpoints;
-        dwarf::dwarf dwarf;
-        elf::elf elf;
+        dwarf_wrapper::dwarf dwarf;
+        elf_wrapper::elf elf;
         std::uint64_t load_address;
 };

@@ -7,6 +7,8 @@
 
 #ifdef PAVO_WIN32
 
+namespace dwarf = dwarf_wrapper;
+
 #pragma region break point
 
 
