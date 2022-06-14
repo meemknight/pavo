@@ -6,6 +6,7 @@
 #include "cpuFeatures.h"
 #include <string>
 #include <optional>
+#include <iostream>
 
 #if PAVO_WIN32
 #include <Windows.h>
