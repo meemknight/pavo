@@ -14,33 +14,33 @@ using PROCESS = HANDLE;
 
 namespace dwarf_wrapper
 {
-        struct dwarf { dwarf(auto&&...) {} };
-        struct die   { die(auto&&...)   {} };
-        struct line_table
-        {
-                line_table(auto&&...) {}
-                struct iterator { iterator(auto&&...) {} };
-        };
+		struct dwarf { dwarf(auto&&...) {} };
+		struct die   { die(auto&&...)   {} };
+		struct line_table
+		{
+				line_table(auto&&...) {}
+				struct iterator { iterator(auto&&...) {} };
+		};
 
-        struct elf
-        {
-                elf(auto&&...) {}
+		struct elf
+		{
+				elf(auto&&...) {}
 
-                static int create_loader(auto&&...)
-                {
-                        return 0;
-                }
-        };
+				static int create_loader(auto&&...)
+				{
+						return 0;
+				}
+		};
 }
 
 namespace elf_wrapper
 {
-        struct elf { elf(auto&&...) {} };
+		struct elf { elf(auto&&...) {} };
 
-        int create_mmap_loader(auto&&...)
-        {
-                return 0;
-        }
+		int create_mmap_loader(auto&&...)
+		{
+				return 0;
+		}
 }
 
 #elif defined PAVO_UNIX 
