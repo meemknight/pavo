@@ -20,6 +20,7 @@ Source control (branch creation, merge/rebase, minim 10 commits):
 Teste automate
 ---
 - ![]([https://github.com/meemknight/pavo/blob/master/photos/teste.jpg]
+
 Am creat 5 teste automate pentru a verifica parsarea corecta a memoriei. Intregrarea in aplicatie am facut-o cu ajutorul librariei Catch2, rezultatul testelor este afisat in Microsoft Visual Studio dupa cum urmeaza:
  
 
@@ -37,8 +38,8 @@ Am scris proiectul in Microsoft Visual Studio si am folosit CMake.
 
 Refactoring
 ---
-Avand in vedere faptul ca numeroase situatii in care am scris cod mult prea specific si greu reutilizabil au aparut in procesul dezvoltarii aplicatiei noastre, devine limpede evidentiata nevoia de a aloca timp pentru procedeul de refactoring. Un exemplu de cod care a fost transformat in unul reutilizabil si usor de citit este *[aici](https://github.com/meemknight/pavo/commit/44a4ee189dd50fc926ad5af95348cb4f56e6c775).
+Avand in vedere faptul ca numeroase situatii in care am scris cod mult prea specific si greu reutilizabil au aparut in procesul dezvoltarii aplicatiei noastre, devine limpede evidentiata nevoia de a aloca timp pentru procedeul de refactoring. Un exemplu de cod care a fost transformat in unul reutilizabil si usor de citit este [aici](https://github.com/meemknight/pavo/commit/44a4ee189dd50fc926ad5af95348cb4f56e6c775).
 
 Design patterns
 ---
-Am folosit un *[singleton](https://github.com/meemknight/pavo/blob/master/shared/include/cpuFeatures.h) pentru a incarca o singura data informatiile necesare despre CPU.
+Am folosit un [singleton](https://github.com/meemknight/pavo/blob/master/shared/include/cpuFeatures.h) pentru a incarca o singura data informatiile necesare despre CPU.
