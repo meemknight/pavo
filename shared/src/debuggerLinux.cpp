@@ -158,9 +158,13 @@ void debugger_t::handle_sigtrap(siginfo_t siginfo)
                 set_pc(get_pc() - 1);
                 fmt::print("Hit breakpoint at address: {:#018x}\n", get_pc());
 
-                const auto offset_pc  = offset_load_address(get_pc());
-                const auto line_entry = *get_line_entry_from_pc(offset_pc);
-                print_source(line_entry->file->path, line_entry->line);
+                auto offset_pc  = offset_load_address(get_pc());
+                auto line_entry = *get_line_entry_from_pc(offset_pc);
+
+                const std::string str   = line_entry.getFilePath();
+                const unsigned line_num = line_entry.getEntryLine();
+
+                print_source(str, line_num);
                 return;
         }
         case TRAP_TRACE:
@@ -218,7 +222,7 @@ std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t p
         return std::nullopt;
 }
 
-std::optional<dwarf::line_table>
+std::optional<dwarf_wrapper::line_table>
 debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 {
         for(auto& comp_unit : dwarf.compilation_units())
@@ -234,7 +238,8 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 
                 if(it != lt.end())
                 {
-                        return it;
+                        dwarf_wrapper::line_table d(it);
+                        return d;
                 }
 
                 throw std::out_of_range{"Line entry not found!"};

@@ -16,16 +16,15 @@ void run(debugger_t& debugger)
 
         fmt::print(stderr, "Load address: {:#018x}\n", debugger.load_address);
 
-        char* line_buf = nullptr;
         while(true)
         {
-                line_buf = linenoise("pavo> ");
-                if(line_buf == nullptr)
+                auto opt_line = LineEditing::get("pavo> ");
+                if(!opt_line)
                 {
                         break;
                 }
 
-                std::string line = line_buf;
+                std::string line = *opt_line;
                 trim(line);
 
                 if(line.empty())
@@ -34,8 +33,6 @@ void run(debugger_t& debugger)
                 }
 
                 debugger.handle_command(line);
-                linenoiseHistoryAdd(line_buf);
-                linenoiseFree(line_buf);
         }
 }
 

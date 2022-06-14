@@ -187,7 +187,7 @@ std::uint64_t debugger_t::handle_command(Command command)
 				auto line_entry = *get_line_entry_from_pc(get_pc());
 				
 				//print_source(line_entry->file->path, line_entry->line, 2);
-				print_source(line_entry.getFilePath(), line_entry.getLine(), 2);
+				print_source(line_entry.getFilePath(), line_entry.getEntryLine(), 2);
 				break;
 		}
 		case Command::Type::Break:
