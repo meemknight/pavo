@@ -10,6 +10,11 @@
 #if PAVO_WIN32
 #include <Windows.h>
 
+inline int generic_open(const std::string filename)
+{
+        return 0;
+}
+
 struct singinfo_dummy
 {
 };
@@ -78,7 +83,7 @@ struct elf
         }
 };
 
-int create_mmap_loader(int)
+inline int create_mmap_loader(int)
 {
         return 0;
 }
@@ -87,6 +92,12 @@ int create_mmap_loader(int)
 
 #elif defined PAVO_UNIX
 #include "linenoise.h"
+#include <fcntl.h>
+
+inline int generic_open(const std::string filename)
+{
+        return open(filename.c_str(), O_RDONLY);
+}
 
 struct LineEditing
 {
@@ -151,7 +162,7 @@ struct line_table
 namespace elf_wrapper
 {
 using elf = ::elf::elf;
-auto create_mmap_loader(int fd)
+inline auto create_mmap_loader(int fd)
 {
         return ::elf::create_mmap_loader(fd);
 }
