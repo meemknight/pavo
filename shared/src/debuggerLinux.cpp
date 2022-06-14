@@ -1,3 +1,5 @@
+#ifdef PAVO_UNIX
+
 #include "debugger.h"
 #include "misc.h"
 #include <unistd.h>
@@ -13,7 +15,10 @@
 #include "fmt/format.h"
 #include <fstream>
 
-#ifdef PAVO_UNIX
+
+#include "elf++.hh"
+#include "dwarf++.hh"
+#include <unistd.h>
 
 #pragma region break point
 
