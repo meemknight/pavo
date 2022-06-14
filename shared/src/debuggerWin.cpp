@@ -21,12 +21,12 @@ void breakpoint_t::disable()
 
 bool breakpoint_t::is_enabled() const
 {
-        return 0;
+		return 0;
 }
 
 std::uint64_t breakpoint_t::get_addr() const
 {
-        return 0;
+		return 0;
 }
 
 #pragma endregion
@@ -39,12 +39,12 @@ debugger_t::debugger_t(const std::string progName, const PROCESS process)
 
 CommandReturn debugger_t::handle_command(const std::string)
 {
-        return {};
+		return {};
 }
 
 std::uint64_t debugger_t::handle_command(Command command)
 {
-        return {};
+		return {};
 }
 
 void debugger_t::continue_execution()
@@ -53,26 +53,26 @@ void debugger_t::continue_execution()
 
 void debugger_t::set_breakpoint(const std::uint64_t addr)
 {
-        return;
+		return;
 }
 
 void debugger_t::dump_registers()
 {
-        return;
+		return;
 }
 std::uint64_t debugger_t::read_memory(const std::uint64_t addr)
 {
-        return {};
+		return {};
 }
 
 void debugger_t::write_memory(const std::uint64_t addr, const std::uint64_t value)
 {
-        return;
+		return;
 }
 
 std::uint64_t debugger_t::get_pc()
 {
-        return {};
+		return {};
 }
 
 void debugger_t::set_pc(const std::uint64_t)
@@ -93,18 +93,19 @@ void debugger_t::init_load_addr()
 
 std::uint64_t debugger_t::offset_load_address(const std::uint64_t)
 {
-        return {};
+		return {};
 }
 
 std::optional<dwarf_wrapper::die> debugger_t::get_function_from_pc(const std::uint64_t)
 {
-        return dwarf_wrapper::die(1);
+		return dwarf_wrapper::die(1);
 }
 
-std::optional<dwarf_wrapper::line_table::iterator>
+std::optional<dwarf_wrapper::line_table>
 debugger_t::get_line_entry_from_pc(const std::uint64_t)
 {
-        return dwarf_wrapper::line_table::iterator(1);
+	//return dwarf_wrapper::line_table::iterator(1);
+	return dwarf_wrapper::line_table{};
 }
 
 void debugger_t::print_source(const std::string&, const unsigned line, const unsigned context)
@@ -113,7 +114,7 @@ void debugger_t::print_source(const std::string&, const unsigned line, const uns
 
 SINFO debugger_t::get_signal_info()
 {
-        return {};
+		return {};
 }
 
 void debugger_t::handle_sigtrap(SINFO)
@@ -127,6 +128,14 @@ void debugger_t::single_step_instruction()
 void debugger_t::single_step_instruction_check_br()
 {
 }
+
+PROCESS debugger_t::run_program(const std::string &path)
+{
+	
+	return 0;
+}
+
+
 
 #pragma endregion
 

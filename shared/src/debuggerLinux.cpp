@@ -218,7 +218,7 @@ std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t p
         return std::nullopt;
 }
 
-std::optional<dwarf::line_table::iterator>
+std::optional<dwarf::line_table>
 debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 {
         for(auto& comp_unit : dwarf.compilation_units())
@@ -251,7 +251,7 @@ PROCESS debugger_t::run_program(const std::string& path)
         if(child_pid < 0)
         {
                 perror("fork");
-                return EXIT_FAILURE;
+                return 0;
         }
 
         if(child_pid == 0)

@@ -107,7 +107,7 @@ struct debugger_t
         void init_load_addr();
         std::uint64_t offset_load_address(const std::uint64_t);
         std::optional<dwarf_wrapper::die> get_function_from_pc(const std::uint64_t);
-        std::optional<dwarf_wrapper::line_table::iterator>
+        std::optional<dwarf_wrapper::line_table>
         get_line_entry_from_pc(const std::uint64_t);
         void print_source(const std::string&, const unsigned line, const unsigned context = 2);
         SINFO get_signal_info();

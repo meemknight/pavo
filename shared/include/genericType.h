@@ -4,39 +4,39 @@
 #include <cstdint>
 #include <string>
 #include "cpuFeatures.h"
-
+#include <string>
 
 #if PAVO_WIN32
 #include <Windows.h>
 
 struct singinfo_dummy
 {
-        siginfo_dummy(auto&&...) {}
 };
 
 using PID = DWORD;
 using PROCESS = HANDLE;
-using SINFO = siginfo_dummy;
+using SINFO = singinfo_dummy;
 
 namespace dwarf_wrapper
 {
-		struct dwarf { dwarf(auto&&...) {} };
-		struct die   { die(auto&&...)   {} };
+		struct dwarf {  };
+		struct die   {  };
 		struct line_table
 		{
-				line_table(auto&&...) {}
-				struct iterator { iterator(auto&&...) {} };
+				std::string getFilePath();
+				unsigned int getEntryLine();
 		};
 
 		struct elf
 		{
-				elf(auto&&...) {}
 
-				static int create_loader(auto&&...)
+				static int create_loader()
 				{
 						return 0;
 				}
 		};
+
+
 }
 
 namespace elf_wrapper
@@ -50,14 +50,41 @@ namespace elf_wrapper
 }
 
 #elif defined PAVO_UNIX 
+
+struct singinfo_dummy
+{
+};
+
+
+namespace dwarf_wrapper
+{
+	struct dwarf {};
+	struct die {};
+	struct line_table
+	{
+		std::string getFilePath();
+		unsigned int getEntryLine();
+	};
+
+	struct elf
+	{
+
+		static int create_loader()
+		{
+			return 0;
+		}
+	};
+
+
+}
+
+
 #include "elf++.hh"
 #include "dwarf++.hh"
 #include <signal.h>
 using PID = pid_t;
 using PROCESS = PID;
 using SINFO = siginfo_t;
-namespace dwarf_wrapper = dwarf;
-namespace elf_wrapper   = elf;
 #endif
 
 //for imgui
