@@ -7,6 +7,8 @@
 
 #include "genericType.h"
 #include "registers.h"
+#include "elf++.hh"
+#include "dwarf++.hh"
 
 
 struct breakpoint_t

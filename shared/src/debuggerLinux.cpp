@@ -264,7 +264,6 @@ PROCESS debugger_t::run_program(const std::string& path)
                 }
 
                 const char* prog_str = path.c_str();
-                debugger_t::run_program(prog_str);
                 execl(prog_str, prog_str, nullptr);
 
                 perror("execl");
