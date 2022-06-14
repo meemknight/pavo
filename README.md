@@ -4,6 +4,8 @@ A command line and GUI debugger for linux (soon port to windows), following this
 
 ---
 
+- ![](https://github.com/meemknight/photos/blob/master/pavo1.png)
+
 Todo and Features
 
 - [x] Linux Support
