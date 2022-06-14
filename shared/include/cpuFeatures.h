@@ -32,7 +32,7 @@ struct CpuFeatures
 
 
 	//note (vlod): this is a singleton
-	CpuFeatures getCpuFeatures();
+	static CpuFeatures getCpuFeatures();
 
 
 private:
