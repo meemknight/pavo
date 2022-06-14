@@ -9,8 +9,14 @@
 #if PAVO_WIN32
 #include <Windows.h>
 
+struct singinfo_dummy
+{
+        siginfo_dummy(auto&&...) {}
+};
+
 using PID = DWORD;
 using PROCESS = HANDLE;
+using SINFO = siginfo_dummy;
 
 namespace dwarf_wrapper
 {
@@ -44,10 +50,12 @@ namespace elf_wrapper
 }
 
 #elif defined PAVO_UNIX 
-using PID = pid_t;
-using PROCESS = PID;
 #include "elf++.hh"
 #include "dwarf++.hh"
+#include <signal.h>
+using PID = pid_t;
+using PROCESS = PID;
+using SINFO = siginfo_t;
 namespace dwarf_wrapper = dwarf;
 namespace elf_wrapper   = elf;
 #endif
