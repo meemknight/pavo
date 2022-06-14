@@ -15,7 +15,6 @@
 #include <optional>
 #include <registers.h>
 #include "debugger.h"
-#include "dwarf++.hh"
 
 void run(debugger_t& debugger)
 {

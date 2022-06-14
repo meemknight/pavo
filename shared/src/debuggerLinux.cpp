@@ -104,16 +104,12 @@ void debugger_t::set_pc(const std::uint64_t val)
 
 void debugger_t::step_over_breakpoint()
 {
-        const std::uint64_t prev_location = get_pc() - 1;
-
-        if(contains(breakpoints, prev_location))
+        if(contains(breakpoints, get_pc()))
         {
-                auto& bp = breakpoints.at(prev_location);
+                auto& bp = breakpoints.at(get_pc());
 
                 if(bp.is_enabled())
                 {
-                        set_pc(prev_location);
-
                         bp.disable();
                         ptrace(PTRACE_SINGLESTEP, process, nullptr, nullptr);
                         wait_for_signal();
@@ -126,6 +122,53 @@ void debugger_t::wait_for_signal()
 {
         int wait_status;
         waitpid(process, &wait_status, 0);
+
+        const auto siginfo = get_signal_info();
+
+        switch(siginfo.si_signo)
+        {
+        case SIGTRAP:
+        {
+                handle_sigtrap(siginfo);
+                break;
+        }
+        case SIGSEGV:
+        {
+                fmt::print("Segfault. Reason: {}\n", siginfo.si_code);
+                break;
+        }
+        default:
+        {
+                fmt::print("Got signal: {}\n", strsignal(siginfo.si_signo));
+        }
+        }
+}
+
+void debugger_t::handle_sigtrap(siginfo_t siginfo)
+{
+        switch(siginfo.si_code)
+        {
+        case SI_KERNEL:
+        case TRAP_BRKPT:
+        {
+                set_pc(get_pc() - 1);
+                fmt::print("Hit breakpoint at address: {:#018x}\n", get_pc());
+
+                const auto offset_pc  = offset_load_address(get_pc());
+                const auto line_entry = *get_line_entry_from_pc(offset_pc);
+                print_source(line_entry->file->path, line_entry->line);
+                return;
+        }
+        case TRAP_TRACE:
+        {
+                return;
+        }
+        default:
+        {
+                fmt::print("Unknown SIGTRAP code: {}\n", siginfo.si_code);
+                return;
+        }
+        }
 }
 
 void debugger_t::init_load_addr()
@@ -196,10 +239,50 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
         return std::nullopt;
 }
 
-
 PROCESS debugger_t::run_program(const char* str)
 {
         return execl(str, str, nullptr);
+}
+
+void debugger_t::print_source(const std::string& filename, const unsigned line,
+                              const unsigned context)
+{
+        std::ifstream file(filename);
+
+        const int start = line <= context ? 1 : line - context;
+        const int end   = line + context + (line < context ? context - line : 0) + 1;
+
+        char c;
+        std::uint64_t current_line = 1;
+
+        while(current_line != start && file.get(c))
+        {
+                if(c == '\n')
+                {
+                        ++current_line;
+                }
+        }
+
+        fmt::print(fmt::runtime(current_line == line ? "> " : "  "));
+
+        while(current_line <= end && file.get(c))
+        {
+                fmt::print("{}", c);
+                if(c == '\n')
+                {
+                        ++current_line;
+                        fmt::print(fmt::runtime(current_line == line ? "> " : "  "));
+                }
+        }
+
+        fmt::print("\n");
+}
+
+siginfo_t debugger_t::get_signal_info()
+{
+        siginfo_t info;
+        ptrace(PTRACE_GETSIGINFO, process, nullptr, &info);
+        return info;
 }
 
 #pragma endregion

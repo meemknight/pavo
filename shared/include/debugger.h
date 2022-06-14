@@ -4,6 +4,7 @@
 #include <optional>
 #include <unistd.h>
 #include <fcntl.h>
+#include <signal.h>
 
 #include "genericType.h"
 #include "registers.h"
@@ -116,6 +117,9 @@ struct debugger_t
         std::uint64_t offset_load_address(const std::uint64_t);
         std::optional<dwarf::die> get_function_from_pc(const std::uint64_t);
         std::optional<dwarf::line_table::iterator> get_line_entry_from_pc(const std::uint64_t);
+        void print_source(const std::string&, const unsigned line, const unsigned context = 2);
+        siginfo_t get_signal_info();
+        void handle_sigtrap(siginfo_t);
 
         static PROCESS run_program(const char* str);
 
