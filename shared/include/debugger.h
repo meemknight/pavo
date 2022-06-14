@@ -104,7 +104,6 @@ struct debugger_t
 
 		std::string start(const std::string progName);
 
-
 		CommandReturn handle_command(const std::string);
 		std::uint64_t handle_command(Command command);
 		void continue_execution();
