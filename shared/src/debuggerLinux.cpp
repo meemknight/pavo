@@ -63,7 +63,7 @@ std::uint64_t breakpoint_t::get_addr() const
 
 bool debugger_t::start(const std::string progName)
 {
-	const PROCESS child = debugger_t::run_program(prog_path);
+	const PROCESS child = debugger_t::run_program(progName);
 	if (child == 0)
 	{
 		return 0;

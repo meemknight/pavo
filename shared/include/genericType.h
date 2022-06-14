@@ -65,7 +65,7 @@ namespace dwarf_wrapper
 	
 	struct elf
 	{
-	
+                        //todo: should not return int
 			static int create_loader()
 			{
 					return 0;
@@ -125,7 +125,7 @@ namespace dwarf_wrapper
 	
 	namespace elf
 	{
-		int create_loader(auto&& arg)
+		auto create_loader(auto&& arg)
 		{
 				return ::dwarf::elf::create_loader(std::forward<decltype(arg)>(arg));
 		}
