@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <algorithm>
 
 static void trim(std::string& str)
 {

@@ -1,5 +1,7 @@
 #https://github.com/meemknight/cmakeSetup
 
+add_compile_options(-std=c++20)
+
 cmake_minimum_required(VERSION 3.16)
 
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreadedDebug$<$<CONFIG:Debug>:Debug>")
@@ -33,7 +35,11 @@ add_subdirectory(thirdparty/Catch2-3.0.1)
 if(WIN32)
 
 elseif(UNIX)
-		#add_subdirectory(thirdparty/libelfin-fbreg)
+		add_custom_target(
+		   libelfin
+		   COMMAND make
+		   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg
+		)
 endif()
 
 include(CTest)
@@ -68,6 +74,13 @@ if(WIN32)
 	target_compile_definitions(pavo-gui PUBLIC PAVO_WIN32)
 elseif(UNIX)
 	target_compile_definitions(pavo-gui PUBLIC PAVO_UNIX) 
+
+        target_link_libraries(pavo-gui SHARED lineNoise
+                                                  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
+                                                  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/libelf++.so)
+
+        add_dependencies(pavo-gui libelfin)
+
 else()
 	message(FATAL_ERROR "Pavo only supports windows and unix" )
 endif()
@@ -77,13 +90,15 @@ target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared/i
 target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/")
 target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/gameLayer/")
 target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-gui/include/platform/")
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/")
+target_include_directories(pavo-gui PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/")
 
 
 
 if(WIN32)
 
 elseif(UNIX)
-	target_link_libraries(pavo-gui PRIVATE libelfin)
+        target_link_libraries(pavo-gui SHARED libelfin)
 endif()
 
 target_link_libraries(pavo-gui PRIVATE glm glfw glad stb_image
@@ -122,11 +137,6 @@ if(WIN32)
 
 elseif(UNIX)
 
-		add_custom_target(
-		   libelfin
-		   COMMAND make
-		   WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg
-		)
 
 		target_link_libraries(pavo-cli PRIVATE lineNoise
 							  ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
