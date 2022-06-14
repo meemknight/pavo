@@ -19,6 +19,7 @@
 void run(debugger_t& debugger)
 {
         debugger.wait_for_signal();
+        debugger.init_load_addr();
 
         char* line_buf = nullptr;
         while(true)

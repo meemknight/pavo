@@ -11,6 +11,7 @@
 #include <sys/user.h>
 #include "fmt/core.h"
 #include "fmt/format.h"
+#include <fstream>
 
 #ifdef PAVO_UNIX
 
@@ -55,7 +56,6 @@ std::uint64_t breakpoint_t::get_addr() const
 #pragma endregion
 
 #pragma region debugger
-
 
 void debugger_t::continue_execution()
 {
@@ -126,6 +126,74 @@ void debugger_t::wait_for_signal()
 {
         int wait_status;
         waitpid(process, &wait_status, 0);
+}
+
+void debugger_t::init_load_addr()
+{
+        if(elf.get_hdr().type == elf::et::dyn)
+        {
+                std::ifstream map("/proc/" + std::to_string(process) + "/maps");
+
+                std::string addr;
+                std::getline(map, addr, '-');
+
+                load_address = std::stoull(addr, 0, 16);
+        }
+}
+
+std::uint64_t debugger_t::offset_load_address(const std::uint64_t addr)
+{
+        return addr - load_address;
+}
+
+std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t pc)
+{
+        for(auto& comp_unit : dwarf.compilation_units())
+        {
+                const auto pc_range = dwarf::die_pc_range(comp_unit.root());
+                if(!pc_range.contains(pc))
+                {
+                        continue;
+                }
+
+                for(const auto& die : comp_unit.root())
+                {
+                        if(die.tag == dwarf::DW_TAG::subprogram)
+                        {
+                                if(dwarf::die_pc_range(die).contains(pc))
+                                {
+                                        return die;
+                                }
+                        }
+                }
+        }
+
+        return std::nullopt;
+}
+
+std::optional<dwarf::line_table::iterator>
+debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
+{
+        for(auto& comp_unit : dwarf.compilation_units())
+        {
+                const auto pc_range = dwarf::die_pc_range(comp_unit.root());
+                if(!pc_range.contains(pc))
+                {
+                        continue;
+                }
+
+                auto& lt = comp_unit.get_line_table();
+                auto it  = lt.find_address(pc);
+
+                if(it != lt.end())
+                {
+                        return it;
+                }
+
+                return std::nullopt;
+        }
+
+        return std::nullopt;
 }
 
 #pragma endregion

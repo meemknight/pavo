@@ -33,7 +33,7 @@ add_subdirectory(thirdparty/Catch2-3.0.1)
 if(WIN32)
 
 elseif(UNIX)
-	add_subdirectory(thirdparty/libelfin-fbreg)
+        #add_subdirectory(thirdparty/libelfin-fbreg)
 endif()
 
 include(CTest)
@@ -114,11 +114,24 @@ endif()
 
 target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared/include/")
 target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/pavo-cli/include/")
+target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/")
+target_include_directories(pavo-cli PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/")
 
 if(WIN32)
 
 elseif(UNIX)
-	target_link_libraries(pavo-cli PRIVATE libelfin)
+
+        add_custom_target(
+           libelfin
+           COMMAND make
+           WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg
+        )
+
+        target_link_libraries(pavo-cli PRIVATE
+                              ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/dwarf/libdwarf++.so
+                              ${PROJECT_SOURCE_DIR}/thirdparty/libelfin-fbreg/elf/libelf++.so)
+
+        add_dependencies(pavo-cli libelfin)
 
 endif()
 
@@ -158,7 +171,7 @@ target_include_directories(pavo-tests PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/shared
 if(WIN32)
 
 elseif(UNIX)
-	target_link_libraries(pavo-tests PRIVATE libelfin)
+        #target_link_libraries(pavo-tests PRIVATE libelfin)
 
 endif()
 
