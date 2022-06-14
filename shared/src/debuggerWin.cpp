@@ -88,20 +88,20 @@ std::uint64_t debugger_t::offset_load_address(const std::uint64_t addr)
 	return {};
 }
 
-std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t pc)
-{
-	return {};
-}
-
-std::optional<dwarf::line_table::iterator>
-debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
-{
-	return {};
-}
+//std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t pc)
+//{
+//	return {};
+//}
+//
+//std::optional<dwarf::line_table::iterator>
+//debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
+//{
+//	return {};
+//}
 
 PROCESS debugger_t::run_program(const char* str)
 {
-        return {};
+		return {};
 }
 
 #pragma endregion
