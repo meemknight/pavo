@@ -196,6 +196,12 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
         return std::nullopt;
 }
 
+
+PROCESS debugger_t::run_program(const char* str)
+{
+        return execl(str, str, nullptr);
+}
+
 #pragma endregion
 
 #endif

@@ -117,6 +117,8 @@ struct debugger_t
         std::optional<dwarf::die> get_function_from_pc(const std::uint64_t);
         std::optional<dwarf::line_table::iterator> get_line_entry_from_pc(const std::uint64_t);
 
+        static PROCESS run_program(const char* str);
+
         std::string progName;
         PROCESS process;
         std::unordered_map<std::uint64_t, breakpoint_t> breakpoints;

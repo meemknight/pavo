@@ -73,7 +73,7 @@ int main(const int argc, const char* argv[])
                 }
 
                 const char* prog_str = prog_path.data();
-                execl(prog_str, prog_str, nullptr);
+                debugger_t::run_program(prog_str);
 
                 perror("execl");
                 return EXIT_FAILURE;
