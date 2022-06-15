@@ -175,6 +175,12 @@ debugger_t::CommandReturn debugger_t::handle_command(const std::string line)
                 c.type    = Command::Type::Finish;
                 return {"", handle_command(c)};
         }
+        else if(command == "currentloc")
+        {
+                Command c = {};
+                c.type    = Command::Type::PrintLocation;
+                return {"", handle_command(c)};
+        }
         else
         {
                 return {fmt::format("Unknown command: '{}'\n", command), 0};
@@ -210,7 +216,12 @@ std::uint64_t debugger_t::handle_command(Command command)
                 single_step_instruction_check_br();
                 auto line_entry = *get_line_entry_from_pc(get_pc());
 
-                // print_source(line_entry->file->path, line_entry->line, 2);
+                print_source(line_entry.getFilePath(), line_entry.getEntryLine(), 2);
+                break;
+        }
+        case Command::Type::PrintLocation:
+        {
+                auto line_entry = *get_line_entry_from_pc(get_pc());
                 print_source(line_entry.getFilePath(), line_entry.getEntryLine(), 2);
                 break;
         }

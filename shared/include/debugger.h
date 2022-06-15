@@ -43,6 +43,7 @@ struct Command
                 Step,
                 Next,
                 Finish,
+                PrintLocation,
         };
 
         struct Break_args
