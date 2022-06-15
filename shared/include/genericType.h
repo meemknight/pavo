@@ -143,10 +143,21 @@ namespace dwarf_wrapper
 			{
 					return wrapped->file->path;
 			}
+
 			unsigned int getEntryLine()
 			{
 					return wrapped->line;
 			}
+
+                        auto getAddress()
+                        {
+                                return wrapped->address;
+                        }
+
+                        void operator++()
+                        {
+                                ++wrapped;
+                        }
 	
 			::dwarf::line_table::iterator wrapped;
 	};
