@@ -21,7 +21,7 @@ struct DebuggerWindow
 
 	//returns error
 	std::string start(std::string name, int id);
-
+	int currentItemBreakPoint = 0;
 
 
 	DebugRezult render();
