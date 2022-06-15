@@ -25,9 +25,9 @@ Todo and Features
     - [X] to Memory
     - [X] to Registers
 
-- [ ] Setp in out next etc
+- [X] Setp in out next etc
 
-- [ ] Print current location
+- [X] Print current location
 - [ ] Print back trace
 - [ ] Print values of variables
 
