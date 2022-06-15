@@ -41,7 +41,7 @@ DebugRezult DebuggerWindow::render()
 					rez.err = rezult.error;
 				}
 
-
+                                cliRezult = rezult.value;
 				memset(input, 0, sizeof(input));
 			}
 
