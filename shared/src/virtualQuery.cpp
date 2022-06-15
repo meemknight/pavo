@@ -180,6 +180,10 @@ bool getNextQuery(OppenedQuery &query, void *&low, void *&hi, int &flags)
 
 
 #if defined PAVO_UNIX
+#include <sys/ptrace.h>
+#include <sys/wait.h>
+#include <fstream>
+#include <unistd.h>
 
 bool readMemory(PROCESS process, void *start, size_t size, void *buff)
 {
