@@ -297,7 +297,6 @@ void HexEditor::render(PROCESS handleToProcess, PID pid, const std::string &proc
 
 					void *copyStart = (void *)std::max(memoryAddress, (size_t)low);
 					void *copyEnd = (void *)std::min(memoryAddress + memSize, (size_t)high);
-					// if (size_t)copyEnd < (size_t) copyStart -> overflow took place; will be fixed afterwards so me can make the bug report
 
 					size_t bytesToCopy = (size_t)copyEnd - (size_t)copyStart;
 
