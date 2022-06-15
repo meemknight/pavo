@@ -9,11 +9,11 @@ Solutie: Avem o clasa Debugger care are un api unde putem trimite comenzi. Clasa
 
 Diagrama secvente:
 
-![]([https://github.com/meemknight/pavo/blob/master/photos/diagrama.jpg]
+![](https://github.com/meemknight/pavo/blob/master/photos/diagrama.jpg)
 
 Diagrama stari:
 
-![]([https://github.com/meemknight/pavo/blob/master/photos/diagrama2.jpg]
+![](https://github.com/meemknight/pavo/blob/master/photos/diagrama2.jpg)
 
 Source control (branch creation, merge/rebase, minim 10 commits):
 ---
@@ -21,7 +21,7 @@ Source control (branch creation, merge/rebase, minim 10 commits):
 
 Teste automate
 ---
-![]([https://github.com/meemknight/pavo/blob/master/photos/teste.jpg]
+![](https://github.com/meemknight/pavo/blob/master/photos/teste.jpg)
 
 Am creat 5 teste automate pentru a verifica parsarea corecta a memoriei. Intregrarea in aplicatie am facut-o cu ajutorul librariei Catch2, rezultatul testelor este afisat in Microsoft Visual Studio dupa cum urmeaza:
  
