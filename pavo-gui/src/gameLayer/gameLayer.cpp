@@ -154,7 +154,14 @@ bool gameLogic(float deltaTime)
 
 	for (int i = 0; i < debuggers.size(); i++)
 	{
-		if (!debuggers[i].render())
+		auto rez = debuggers[i].render();
+
+		if (!rez.err.empty())
+		{
+			errorWindows.push_back(ErrorWindow(rez.err, uniqueId++));
+		}
+
+		if (!rez.running)
 		{
 			debuggers.erase(debuggers.begin() + i);
 			i--;

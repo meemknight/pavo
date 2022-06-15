@@ -15,8 +15,12 @@ std::string DebuggerWindow::start(std::string name, int id)
 	return "";
 }
 
-bool DebuggerWindow::render()
+DebugRezult DebuggerWindow::render()
 {
+	DebugRezult rez = {"", 1};
+
+	if (name == "") { return DebugRezult{"", 0}; }
+
 	ImGui::PushID(id);
 
 	if (ImGui::Begin(name.c_str()))
@@ -24,10 +28,32 @@ bool DebuggerWindow::render()
 
 		ImGui::Text("Pavo debugger");
 
+		ImGui::BeginChild(111);
+		{
+
+			if (ImGui::InputText("Enter command", input, sizeof(input) - 1,
+				ImGuiInputTextFlags_EnterReturnsTrue))
+			{
+				auto rezult = debugger.handle_command(input);
+
+				if (!rezult.error.empty())
+				{
+					rez.err = rezult.error;
+				}
+
+
+				memset(input, 0, sizeof(input));
+			}
+
+			ImGui::Text("Rezult: %" IM_PRIu64, cliRezult);
+
+		}
+		ImGui::EndChild();
+
 	}
 	ImGui::End();
 
 	ImGui::PopID();
 
-	return true;
+	return rez;
 }

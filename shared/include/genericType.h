@@ -65,7 +65,7 @@ namespace dwarf_wrapper
 	
 	struct elf
 	{
-                        //todo: should not return int
+						//todo: should not return int
 			static int create_loader()
 			{
 					return 0;
@@ -125,7 +125,7 @@ namespace dwarf_wrapper
 	
 	namespace elf
 	{
-                template<typename T>
+				template<typename T>
 		auto create_loader(T&& arg)
 		{
 				return ::dwarf::elf::create_loader(std::forward<T>(arg));
@@ -149,15 +149,15 @@ namespace dwarf_wrapper
 					return wrapped->line;
 			}
 
-                        auto getAddress()
-                        {
-                                return wrapped->address;
-                        }
+						auto getAddress()
+						{
+								return wrapped->address;
+						}
 
-                        void operator++()
-                        {
-                                ++wrapped;
-                        }
+						void operator++()
+						{
+								++wrapped;
+						}
 	
 			::dwarf::line_table::iterator wrapped;
 	};

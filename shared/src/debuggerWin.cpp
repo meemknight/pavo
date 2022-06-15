@@ -128,6 +128,32 @@ void debugger_t::single_step_instruction_check_br()
 {
 }
 
+void debugger_t::remove_breakpoint(const std::uint64_t addr)
+{
+
+}
+
+void debugger_t::step_out()
+{
+
+}
+
+std::uint64_t debugger_t::get_offset_pc()
+{
+	return 0;
+}
+
+void debugger_t::step_in()
+{
+
+}
+
+void debugger_t::step_over()
+{
+
+}
+
+
 PROCESS debugger_t::run_program(const std::string &path)
 {
 	//todo implement
