@@ -1,6 +1,111 @@
 #include "virtualQuery.h"
+#include <algorithm>
+#undef min
+#undef max
 
-#ifdef PAVO_WIN32
+void refindBytePatternInProcessMemory(PROCESS process, void *pattern, size_t patternLen, std::vector<void *> &found)
+{
+	if (patternLen == 0) { return; }
+
+	auto newFound = findBytePatternInProcessMemory(process, pattern, patternLen);
+
+	std::vector<void *> intersect;
+	intersect.resize(std::min(found.size(), newFound.size()));
+
+	std::set_intersection(found.begin(), found.end(),
+		newFound.begin(), newFound.end(),
+		intersect.begin());
+
+	intersect.erase(std::remove(intersect.begin(), intersect.end(), nullptr), intersect.end());
+
+	found = std::move(intersect);
+}
+
+//http://kylehalladay.com/blog/2020/05/20/Rendering-With-Notepad.html
+std::vector<void *> findBytePatternInProcessMemory(PROCESS process, void *pattern, size_t patternLen)
+{
+	if (patternLen == 0) { return {}; }
+
+	std::vector<void *> returnVec;
+	returnVec.reserve(1000);
+
+	auto query = initVirtualQuery(process);
+
+	if (!query.oppened());
+	return {};
+
+	void *low = nullptr;
+	void *hi = nullptr;
+	int flags = memQueryFlags_None;
+
+
+	while (getNextQuery(query, low, hi, flags))
+	{
+		if ((flags & memQueryFlags_Comitted) && (flags & memQueryFlags_Read) && (flags & memQueryFlags_Write))
+		{
+			//search for our byte patern
+			size_t size = (char *)hi - (char *)low + 1;
+			char *localCopyContents = new char[size];
+			if (
+				readMemory(process, low, size, localCopyContents)
+				)
+			{
+				char *cur = localCopyContents;
+				size_t curPos = 0;
+				while (curPos < size - patternLen + 1)
+				{
+					if (memcmp(cur, pattern, patternLen) == 0)
+					{
+						returnVec.push_back((char *)low + curPos);
+					}
+					curPos++;
+					cur++;
+				}
+			}
+			delete[] localCopyContents;
+		}
+	}
+
+	return returnVec;
+}
+
+#if defined PAVO_WIN32
+
+#include <Windows.h>
+#include <TlHelp32.h>
+#include "imgui.h"
+#include <vector>
+#include <algorithm>
+
+#undef min
+#undef max
+
+
+void writeMemory(PROCESS process, void *ptr, void *data, size_t size, ErrorLog &errorLog)
+{
+
+	errorLog.clearError();
+
+	BOOL writeSucceeded = WriteProcessMemory(
+		process,
+		ptr,
+		data,
+		size,
+		NULL);
+
+	if (!writeSucceeded)
+	{
+		errorLog.setError(getLastErrorString().c_str());
+	}
+
+}
+
+bool readMemory(PROCESS process, void *start, size_t size, void *buff)
+{
+	SIZE_T readSize = 0;
+	return ReadProcessMemory(process, start, buff, size, &readSize);
+}
+
 
 OppenedQuery initVirtualQuery(PROCESS process)
 {
@@ -68,20 +173,107 @@ bool getNextQuery(OppenedQuery &query, void *&low, void *&hi, int &flags)
 	}
 }
 
+
+
+
 #endif
 
-#ifdef PAVO_LINUX
-#include <vector>
-#include <algorithm>
-#include <errno.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <sys/wait.h>
-#include <sys/types.h>
-#include <sys/ptrace.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <fstream>
+
+#if defined PAVO_UNIX
+
+bool readMemory(PROCESS process, void *start, size_t size, void *buff)
+{
+	char file[256] = {};
+	sprintf(file, "/proc/%ld/mem", (long)process);
+	int fd = open(file, O_RDWR);
+
+	if (fd == -1)
+	{
+		return 0;
+	}
+
+	if (ptrace(PTRACE_ATTACH, process, 0, 0) == -1)
+	{
+		close(fd);
+		return 0;
+	}
+
+	if (waitpid(process, NULL, 0) == -1)
+	{
+		ptrace(PTRACE_DETACH, process, 0, 0);
+		close(fd);
+		return 0;
+	}
+
+	off_t addr = (off_t)start; // target process address
+
+	if (pread(fd, buff, size, addr) == -1)
+	{
+		ptrace(PTRACE_DETACH, process, 0, 0);
+		close(fd);
+		return 0;
+	}
+
+	ptrace(PTRACE_DETACH, process, 0, 0);
+	close(fd);
+
+	return 1;
+}
+
+//writes memory in the process' space
+void writeMemory(PROCESS process, void *ptr, void *data, size_t size, ErrorLog &errorLog)
+{
+
+	//https://nullprogram.com/blog/2016/09/03/
+
+	errorLog.clearError();
+
+	char file[256] = {};
+	sprintf(file, "/proc/%ld/mem", (long)process);
+	int fd = open(file, O_RDWR);
+
+
+	if (fd == -1)
+	{
+		errorLog.setError(getLastErrorString().c_str());
+		return;
+	}
+
+	if (ptrace(PTRACE_ATTACH, process, 0, 0) == -1)
+	{
+		errorLog.setError(getLastErrorString().c_str());
+		close(fd);
+		return;
+	}
+
+	//wait for process to change state
+	if (waitpid(process, NULL, 0) == -1)
+	{
+		errorLog.setError(getLastErrorString().c_str());
+		ptrace(PTRACE_DETACH, process, 0, 0);
+		close(fd);
+		return;
+	}
+
+	off_t addr = (off_t)ptr; // target process address
+
+	if (pwrite(fd, data, size, addr) == -1)
+	{
+		errorLog.setError(getLastErrorString().c_str());
+		ptrace(PTRACE_DETACH, process, 0, 0);
+		close(fd);
+		return;
+	}
+
+	ptrace(PTRACE_DETACH, process, 0, 0);
+	close(fd);
+
+	//if (!writeSucceeded) //exaple setting error
+	//{
+	//	errorLog.setError(getLastErrorString().c_str());
+	//}
+}
+
 
 OppenedQuery initVirtualQuery(PROCESS process)
 {
@@ -139,6 +331,7 @@ bool getNextQuery(OppenedQuery &query, void *&low, void *&hi, int &flags)
 
 	return true;
 }
+
 
 
 #endif

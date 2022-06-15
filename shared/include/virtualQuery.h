@@ -1,7 +1,11 @@
 #pragma once
 #include "genericType.h"
 #include <sstream>
+#include <vector>
+#include "errorLogging.h"
 
+void writeMemory(PROCESS process, void *ptr, void *data, size_t size, ErrorLog &errorLog);
+bool readMemory(PROCESS process, void *start, size_t size, void *buff);
 
 enum
 {
@@ -11,9 +15,10 @@ enum
 	memQueryFlags_Write = 0b0010,
 	memQueryFlags_Execute = 0b0100,
 	memQueryFlags_Comitted = 0b1000,
+
 };
 
-#if PAVO_WIN32
+#if defined PAVO_WIN32
 
 struct OppenedQuery
 {
@@ -37,3 +42,7 @@ struct OppenedQuery
 
 OppenedQuery initVirtualQuery(PROCESS process);
 bool getNextQuery(OppenedQuery &query, void *&low, void *&hi, int &flags);
+
+std::vector<void *> findBytePatternInProcessMemory(PROCESS process, void *pattern, size_t patternLen);
+
+void refindBytePatternInProcessMemory(PROCESS process, void *pattern, size_t patternLen, std::vector<void *> &found);
