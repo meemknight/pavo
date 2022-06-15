@@ -15,7 +15,6 @@
 #include "fmt/format.h"
 #include <fstream>
 
-
 #include "elf++.hh"
 #include "dwarf++.hh"
 #include <unistd.h>
@@ -61,6 +60,23 @@ std::uint64_t breakpoint_t::get_addr() const
 #pragma endregion
 
 #pragma region debugger
+
+bool debugger_t::start(const std::string progName)
+{
+        const PROCESS child = debugger_t::run_program(progName);
+        if(child == 0)
+        {
+                return 0;
+        }
+
+        this->progName = progName;
+        this->process  = child;
+        const auto fd  = open(progName.c_str(), O_RDONLY);
+        elf            = elf_wrapper::elf{elf_wrapper::create_mmap_loader(fd)};
+        dwarf          = dwarf_wrapper::dwarf{dwarf_wrapper::elf::create_loader(elf)};
+
+        return true;
+}
 
 void debugger_t::continue_execution()
 {
@@ -159,9 +175,13 @@ void debugger_t::handle_sigtrap(siginfo_t siginfo)
                 set_pc(get_pc() - 1);
                 fmt::print("Hit breakpoint at address: {:#018x}\n", get_pc());
 
-                const auto offset_pc  = offset_load_address(get_pc());
-                const auto line_entry = *get_line_entry_from_pc(offset_pc);
-                print_source(line_entry->file->path, line_entry->line);
+                auto offset_pc  = offset_load_address(get_pc());
+                auto line_entry = *get_line_entry_from_pc(offset_pc);
+
+                const std::string str   = line_entry.getFilePath();
+                const unsigned line_num = line_entry.getEntryLine();
+
+                print_source(str, line_num);
                 return;
         }
         case TRAP_TRACE:
@@ -219,7 +239,7 @@ std::optional<dwarf::die> debugger_t::get_function_from_pc(const std::uint64_t p
         return std::nullopt;
 }
 
-std::optional<dwarf::line_table::iterator>
+std::optional<dwarf_wrapper::line_table>
 debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 {
         for(auto& comp_unit : dwarf.compilation_units())
@@ -235,12 +255,15 @@ debugger_t::get_line_entry_from_pc(const std::uint64_t pc)
 
                 if(it != lt.end())
                 {
-                        return it;
+                        dwarf_wrapper::line_table d(it);
+                        return d;
                 }
 
+                throw std::out_of_range{"Line entry not found!"};
                 return std::nullopt;
         }
 
+        throw std::out_of_range{"Line entry not found!"};
         return std::nullopt;
 }
 
@@ -250,7 +273,7 @@ PROCESS debugger_t::run_program(const std::string& path)
         if(child_pid < 0)
         {
                 perror("fork");
-                return EXIT_FAILURE;
+                return 0;
         }
 
         if(child_pid == 0)
@@ -329,6 +352,98 @@ void debugger_t::single_step_instruction_check_br()
         else
         {
                 single_step_instruction();
+        }
+}
+
+void debugger_t::remove_breakpoint(const std::uint64_t addr)
+{
+        if(breakpoints.at(addr).is_enabled())
+        {
+                breakpoints.at(addr).disable();
+        }
+
+        breakpoints.erase(addr);
+}
+
+void debugger_t::step_out()
+{
+        auto frame_pointer  = *get_register_value(process, Reg::rbp);
+        auto return_address = read_memory(frame_pointer + 8);
+
+        bool should_remove_breakpoint = false;
+        if(!contains(breakpoints, return_address))
+        {
+                set_breakpoint(return_address);
+                should_remove_breakpoint = true;
+        }
+
+        continue_execution();
+
+        if(should_remove_breakpoint)
+        {
+                remove_breakpoint(return_address);
+        }
+}
+
+std::uint64_t debugger_t::get_offset_pc()
+{
+        return offset_load_address(get_pc());
+}
+
+void debugger_t::step_in()
+{
+        auto line = get_line_entry_from_pc(get_offset_pc())->getEntryLine();
+
+        while(get_line_entry_from_pc(get_offset_pc())->getEntryLine() == line)
+        {
+                single_step_instruction_check_br();
+        }
+
+        auto line_entry = *get_line_entry_from_pc(get_offset_pc());
+        print_source(line_entry.getFilePath(), line_entry.getEntryLine());
+}
+
+uint64_t debugger_t::offset_dwarf_address(const uint64_t addr)
+{
+        return addr + load_address;
+}
+
+void debugger_t::step_over()
+{
+        auto func       = get_function_from_pc(get_offset_pc());
+        auto func_entry = dwarf::at_low_pc(*func);
+        auto func_end   = dwarf::at_high_pc(*func);
+
+        auto line       = get_line_entry_from_pc(func_entry);
+        auto start_line = get_line_entry_from_pc(get_offset_pc());
+
+        std::vector<std::intptr_t> to_delete{};
+
+        while(line->getAddress() < func_end)
+        {
+                auto load_address = offset_dwarf_address(line->getAddress());
+                if(line->getAddress() != start_line->getAddress() &&
+                   !breakpoints.count(load_address))
+                {
+                        set_breakpoint(load_address);
+                        to_delete.push_back(load_address);
+                }
+                ++(*line);
+        }
+
+        auto frame_pointer  = *get_register_value(process, Reg::rbp);
+        auto return_address = read_memory(frame_pointer + 8);
+        if(!breakpoints.count(return_address))
+        {
+                set_breakpoint(return_address);
+                to_delete.push_back(return_address);
+        }
+
+        continue_execution();
+
+        for(auto addr : to_delete)
+        {
+                remove_breakpoint(addr);
         }
 }
 
