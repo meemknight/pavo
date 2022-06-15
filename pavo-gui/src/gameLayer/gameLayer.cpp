@@ -106,16 +106,6 @@ bool gameLogic(float deltaTime)
 			ImGui::EndMenuBar();
 		}
 		
-		ImGui::Begin("test window");
-
-			ImGui::Text("ceva");
-			ImGui::Text("ceva");
-			ImGui::Text("ceva");
-			ImGui::Text("ceva");
-
-		ImGui::End();
-		
-		
 	}
 	ImGui::End();
 

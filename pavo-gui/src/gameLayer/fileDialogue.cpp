@@ -3,7 +3,15 @@
 void FileDialogue::start()
 {
 	fileDialog.SetTitle("Sellect program");
+
+#ifdef PAVO_WIN32
 	fileDialog.SetTypeFilters({".exe"});
+#endif
+
+#ifdef PAVO_UNIX
+
+#endif
+
 	fileDialog.Open();
 }
 

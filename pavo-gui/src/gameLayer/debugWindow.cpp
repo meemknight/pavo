@@ -1,5 +1,6 @@
 #include "debugWindow.h"
 #include "imgui_internal.h"
+#include <sstream>
 #undef min
 #undef max
 
@@ -23,6 +24,12 @@ std::string DebuggerWindow::start(std::string name, int id)
 
 DebugRezult DebuggerWindow::render()
 {
+	std::stringstream s;
+	s << name << "#hex editor";
+
+	//todo change on windows
+	hexEditor.render(debugger.process, (PID)debugger.process, name, s);
+
 	DebugRezult rez = {"", 1};
 
 	if (name == "") { return DebugRezult{"", 0}; }
