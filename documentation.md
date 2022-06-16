@@ -32,8 +32,7 @@ Fiecare test asigura parsarea si cititrea corecta a memoriei in fiecare caz spec
 Bug reporting
 ---
 La hex editor am întâlnit un bug atunci când adresa de la care trebuia sa inceapa afisarea memorie se apropia de limita teoretica a memoriei  - 2^64 - 1 (cel mai mare întreg ce poate fi scris pe 64 de biti fara semn), ceea ce conducea la un overflow când peste adresa de bază era adaugata dimensiunea zonei de memorie pe care doream sa o afisam.
-Pentru a rezolva aceasta problema am limitat valoarea maximă a adresei de start astfel incat sa prevenim un overflow, dar sa fie în continuare posibil sa afisam corect starea ultimilor “bytes” de memorie. Practic, la acea adresa ar fi oricum imposibil sa găsim memorie alocată din moment ce nici un computer nu dispune de suficientă memorie RAM incat sa ocupe întreg spațiul de adresare oferit de sistemele pe 64 de biti. În plus, procesoarele disponibile în prezent folosesc doar 48 de biți dintr-o adresa din moment ce aceasta dimensiune este suficientă pentru a adresa 256 TB de memorie.
-- needs a link to bug issue on github / commit in which it was fixed
+Pentru a rezolva aceasta problema am limitat valoarea maximă a adresei de start astfel incat sa prevenim un overflow, dar sa fie în continuare posibil sa afisam corect starea ultimilor “bytes” de memorie. Practic, la acea adresa ar fi oricum imposibil sa găsim memorie alocată din moment ce nici un computer nu dispune de suficientă memorie RAM incat sa ocupe întreg spațiul de adresare oferit de sistemele pe 64 de biti. În plus, procesoarele disponibile în prezent folosesc doar 48 de biți dintr-o adresa din moment ce aceasta dimensiune este suficientă pentru a adresa 256 TB de memorie. Bug reporturi se pot gasi [aici](https://github.com/meemknight/pavo/issues/5) si [aici](https://github.com/meemknight/pavo/commit/a99baa2832cc27b39ac33fbec120ed70e67f9efb)
 
 Folosirea unui build tool
 ---
